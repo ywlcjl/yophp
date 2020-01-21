@@ -5,6 +5,6 @@
  */
 
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASSWORD', 'ywl841214');
+define('DB_USER', 'yophp');
+define('DB_PASSWORD', 'yophp');
 define('DB_NAME', 'yophp');
