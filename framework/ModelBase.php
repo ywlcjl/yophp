@@ -8,9 +8,6 @@ class ModelBase
     
     protected $db;
     
-    protected $pageList;
-
-
     public function __construct()
     {
         //获取数据库连接
@@ -22,13 +19,8 @@ class ModelBase
         $result = array();
         
         $whereStr = $this->whereStr($param);
-        
-        //sql where 占位条件
-        if(!$param) {
-            $whereStr = '1=1';
-        }
-        
-        $sql = "SELECT * FROM ". $this->tableName." WHERE $whereStr 
+                
+        $sql = "SELECT * FROM ". $this->tableName." $whereStr 
                 ORDER BY $orderBy ";
 
         if($limit !== '') {
@@ -50,12 +42,7 @@ class ModelBase
         $row = array();
         $whereStr = $this->whereStr($param);
         
-        //sql where 占位条件
-        if(!$param) {
-            $whereStr = '1=1';
-        }
-        
-        $sql = "SELECT * FROM ". $this->tableName." WHERE $whereStr";
+        $sql = "SELECT * FROM ". $this->tableName." $whereStr";
 
         $sth = $this->db->prepare($sql);
         $sth->execute();
@@ -71,13 +58,8 @@ class ModelBase
     {
         $num = 0;
         $whereStr = $this->whereStr($param);
-        
-        //sql where 占位条件
-        if(!$param) {
-            $whereStr = '1=1';
-        }
-        
-        $sql = "SELECT COUNT(*) as num FROM ". $this->tableName." WHERE $whereStr";
+                
+        $sql = "SELECT COUNT(*) as num FROM ". $this->tableName." $whereStr";
         
         $sth = $this->db->prepare($sql);
         $sth->execute();
@@ -149,7 +131,7 @@ class ModelBase
         }
         $whereStr = $this->whereStr($whereParam);
         
-        $sql = "UPDATE " . $this->tableName. " SET $setStr WHERE $whereStr";
+        $sql = "UPDATE " . $this->tableName. " SET $setStr $whereStr";
 
         $update = $this->db->exec($sql);
         return $update;
@@ -159,7 +141,7 @@ class ModelBase
     {
         $whereStr = $this->whereStr($param);
         
-        $sql = "DELETE FROM " . $this->tableName." WHERE $whereStr";
+        $sql = "DELETE FROM " . $this->tableName." $whereStr";
         echo $sql;
         $delete = $this->db->exec($sql);
         return $delete;
@@ -306,10 +288,6 @@ class ModelBase
         
         View::getInstance()->setPage($pageStr);
     }
-    
-    public function getPageList() {
-        return $this->pageList;
-    }
 
     public function insertId()
     {
@@ -336,6 +314,8 @@ class ModelBase
     private function whereStr($param) {
         $whereStr = '';
         if($param && is_array($param)) {
+            $whereStr .= ' WHERE ';
+            
             $i = 0;
             foreach($param as $key=>$value) {
                 if($i > 0) {
