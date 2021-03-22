@@ -1,6 +1,6 @@
 <?php
 
-class RedisEx {
+class Yo_RedisEx {
     //单例实例化
     private static $_instance;
     

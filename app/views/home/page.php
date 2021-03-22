@@ -1,4 +1,4 @@
-<?php View::getInstance()->render('_header', array(
+<?php view()->render('_header', array(
     'title' => 'Yo page'
 )); ?>
 
@@ -13,6 +13,6 @@
 </ul>
 <?php endif;?>
 
-<div><?php echo View::getInstance()->getPage() ?></div>
+<div><?php echo view()->getPage() ?></div>
 
-<?php View::getInstance()->render('_footer');?>
+<?php view()->render('_footer');?>

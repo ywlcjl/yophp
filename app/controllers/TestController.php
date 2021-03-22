@@ -21,7 +21,7 @@ class TestController
         	echo $value['name'].' '.$value['create_time'].'<br>';
         }
         
-        //View::getInstance()->render('home/index', $data);
+        //view()->render('home/index', $data);
     }
     
     public function test() {
@@ -89,7 +89,7 @@ class TestController
     }
     
     public function redisex() {
-        $redis = RedisEx::getInstance();
+        $redis = Yo_RedisEx::getInstance();
         $testModel = TestModel::getInstance();
         
         $tests = $redis->get("test", true);
@@ -108,7 +108,7 @@ class TestController
         $tests = $testModel->getPage(array('sex'=>2), 'id DESC', '/home/page', 2);
         $data['tests'] = $tests;
         
-        View::getInstance()->render('home/page', $data);
+        view()->render('home/page', $data);
     }
     
     public function pagesql() {
@@ -118,7 +118,7 @@ class TestController
         $tests = $testModel->getPageSql("SELECT * FROM test WHERE sex=2 ORDER BY id ASC", '/home/pagesql', 5, '?cid=2');
         $data['tests'] = $tests;
         
-        View::getInstance()->render('home/page', $data);
+        view()->render('home/page', $data);
     }
 }
 

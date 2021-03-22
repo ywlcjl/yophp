@@ -2,7 +2,7 @@
 /*
  * 模型基类
  */
-class ModelBase
+class Yo_ModelBase
 {
     protected $tableName;
     
@@ -11,7 +11,7 @@ class ModelBase
     public function __construct()
     {
         //获取数据库连接
-        $this->db = PdoMysql::getInstance()->getDb();
+        $this->db = Yo_PdoMysql::getInstance()->getDb();
     }
     
     public function getResult($param=array(), $limit='', $start=0, $orderBy='id DESC')
@@ -286,7 +286,7 @@ class ModelBase
         
         $pageStr .= '</div>';
         
-        View::getInstance()->setPage($pageStr);
+        view()->setPage($pageStr);
     }
 
     public function insertId()

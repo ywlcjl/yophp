@@ -1,4 +1,4 @@
-<?php View::getInstance()->render('_header', array(
+<?php view()->render('_header', array(
     'title' => 'Yophp home'
 )); ?>
 
@@ -15,4 +15,4 @@
 
 <div><?php echo $var ?></div>
 
-<?php View::getInstance()->render('_footer');?>
+<?php view()->render('_footer');?>

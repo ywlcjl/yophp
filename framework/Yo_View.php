@@ -1,6 +1,6 @@
 <?php
 
-class View
+class Yo_View
 {
     //protected $variables = array();
     

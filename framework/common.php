@@ -12,8 +12,12 @@ function loadClass($className)
 {
     //TestController.php 截取 Controller
 //    $controllerKey = substr($className, -10, 10);
-    //TestModel.php 截取 Model
+
+    //TestModel.php 截取Model
     $modelKey = substr($className, -5, 5);
+    
+    //Yo_Model.php 截取Yo_
+    $frameworklKey = substr($className, 0, 3);
     
 //    if($controllerKey == 'Controller') {
 //        $file = APP_DIR . 'controllers/'.$className.'.php';
@@ -26,17 +30,17 @@ function loadClass($className)
         if (file_exists($file)) {
             include_once $file;
         }
-    } else {
+    } elseif($frameworklKey == 'Yo_') {
         //加载框架类
         $file = FRAMEWORK_DIR . $className . '.php';
         if (file_exists($file)) {
             include_once $file;
-        } else {
-            //加载自定义类
-            $file = APP_DIR.'libraries/' . $className . '.php';
-            if(file_exists($file)) {
-                include_once $file;
-            }
+        }
+    } else {
+        //加载自定义类
+        $file = APP_DIR . 'libraries/' . $className . '.php';
+        if (file_exists($file)) {
+            include_once $file;
         }
     }
 }
@@ -82,4 +86,12 @@ function uri($num='') {
     } else {
         return $uris;
     }
+}
+
+/**
+ * 获取视图对象
+ * @return Yo_View
+ */
+function view() {
+    return Yo_View::getInstance();
 }

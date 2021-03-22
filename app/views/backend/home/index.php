@@ -1,4 +1,4 @@
-<?php View::getInstance()->render('backend/_header', array(
+<?php Yo_View::getInstance()->render('backend/_header', array(
     
 )); ?>
 
@@ -12,4 +12,4 @@
 </ul>
 <?php endif;?>
 
-<?php View::getInstance()->render('backend/_footer');?>
+<?php view()->render('backend/_footer');?>

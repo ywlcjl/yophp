@@ -1,6 +1,6 @@
 <?php
 
-class PdoMysql {
+class Yo_PdoMysql {
     //单例实例化
     private static $_instance;
     

@@ -19,7 +19,7 @@ class HomeController
         }
         $data['tests'] = $tests;
         
-        View::getInstance()->render('backend/home/index', $data);
+        view()->render('backend/home/index', $data);
     }
     
 }

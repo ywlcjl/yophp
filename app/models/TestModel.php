@@ -1,6 +1,6 @@
 <?php
 
-class TestModel extends ModelBase 
+class TestModel extends Yo_ModelBase
 {
     //模型表名
     protected static $name = 'test';
@@ -19,9 +19,7 @@ class TestModel extends ModelBase
         if (!(self::$_instance instanceof self)) {
             self::$_instance = new self();
         }
-        
         self::$_instance->tableName = self::$name;
-        
         return self::$_instance;
     }
 
