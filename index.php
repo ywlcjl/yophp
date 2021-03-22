@@ -4,7 +4,7 @@
  */
 
 define('APP_PATH', __DIR__.'/');  // //..为上一级目录
-define('APP_FOLDER', 'application');
+define('APP_FOLDER', 'app');
 define('APP_DIR', APP_PATH.APP_FOLDER.'/');
 define('CONFIG_DIR', APP_PATH."config/");
 define('FRAMEWORK_DIR', APP_PATH.'framework/');
