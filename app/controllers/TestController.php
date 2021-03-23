@@ -1,5 +1,4 @@
 <?php
-
 //namespace Yophp\Application\Controllers;
 
 class TestController
@@ -9,19 +8,13 @@ class TestController
     }
 
     public function index() {
-        //$data = array();
+        $data = array();
         $testModel = TestModel::getInstance();
         
-        $test = $testModel->getRow(array('id'=>2));
-        echo $test['name'].'<br>';
-
-
-        $tests = $testModel->getResult(array('sex'=>1), 2, 0, 'id ASC');
-        foreach ($tests as $key => $value) {
-        	echo $value['name'].' '.$value['create_time'].'<br>';
-        }
+        $data['test'] = $testModel->getResult(array('name like'=>'jacky'), 10, 0, 'id ASC');
+        $data['var'] = clean($_GET['var']);
         
-        //view()->render('home/index', $data);
+        view()->render('test/index', $data);
     }
     
     public function test() {
@@ -101,14 +94,42 @@ class TestController
         print_r($tests);
     }
     
+    public function cache() {
+        $cache = Yo_Cache::getInstance('apc', 'file');
+        
+        $testModel = TestModel::getInstance();
+        
+        $tests = $cache->get("test_cache");
+        if(!$tests) {
+            $tests = $testModel->getResult(array('sex'=>2), 10, 0);
+            $cache->save("test_cache", $tests, 3600);
+        }
+        
+        print_r($tests);
+    }
+    
+    public function cacheredis() {
+        $cache = Yo_Cache::getInstance('redis', 'file');
+        
+        $testModel = TestModel::getInstance();
+        
+        $tests = $cache->get("test_redis_cache");
+        if(!$tests) {
+            $tests = $testModel->getResult(array('sex'=>2), 10, 0);
+            $cache->save("test_redis_cache", $tests, 3600);
+        }
+        
+        print_r($tests);
+    }
+    
     public function page() {
         $data = array();
         $testModel = TestModel::getInstance();
         
-        $tests = $testModel->getPage(array('sex'=>2), 'id DESC', '/home/page', 2);
+        $tests = $testModel->getPage(array('sex'=>2), 'id DESC', '/test/page', 2);
         $data['tests'] = $tests;
         
-        view()->render('home/page', $data);
+        view()->render('test/page', $data);
     }
     
     public function pagesql() {
@@ -118,7 +139,7 @@ class TestController
         $tests = $testModel->getPageSql("SELECT * FROM test WHERE sex=2 ORDER BY id ASC", '/home/pagesql', 5, '?cid=2');
         $data['tests'] = $tests;
         
-        view()->render('home/page', $data);
+        view()->render('test/page', $data);
     }
 }
 

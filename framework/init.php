@@ -4,6 +4,7 @@
  */
 
 require CONFIG_DIR.'config.php';
+require CONFIG_DIR.'route.php';
 require FRAMEWORK_DIR.'common.php';
 
 define('CONTROLLER_DIR', APP_DIR.'controllers/');
@@ -46,6 +47,25 @@ $module = '';
 
 //获取链接uri数组
 $uris = uri();
+
+//路由映射
+if (array_key_exists($uris[0], $route)) {
+    //路由设定映射值
+    $routeValue = $route[$uris[0]];
+    $routeUriT = explode('/', $routeValue);
+    $routeUris = array();
+    
+    if ($routeUriT) {
+        foreach ($routeUriT as $key => $value) {
+            if ($value) {
+                $routeUris[] = $value;
+            }
+        }
+    }
+    //路由映射存在则uris重新赋值
+    $uris = $routeUris;
+}
+
 $uriCount = 0;
 if($uris) {
     foreach($uris as $key=>$value) {
@@ -55,14 +75,14 @@ if($uris) {
     }
 }
 
-if($uriCount > 2) {
+if ($uriCount > 2) {
     //带模块的路径
     $module = $uris[0];
     $controller = $uris[1];
     $action = $uris[2];
-} elseif($uriCount > 1) {
+} elseif ($uriCount > 1) {
     //模块+控制器 或 
-    if(is_dir(CONTROLLER_DIR.$uris[0])) {
+    if (is_dir(CONTROLLER_DIR . $uris[0])) {
         $module = $uris[0];
         $controller = $uris[1];
     } else {
@@ -70,7 +90,7 @@ if($uriCount > 2) {
         $controller = $uris[0];
         $action = $uris[1];
     }
-} elseif($uriCount > 0) {
+} elseif ($uriCount > 0) {
     //带controller的路径
     $controller = $uris[0];
 } else {
@@ -83,6 +103,7 @@ if($uriCount > 2) {
         $action = clean($_REQUEST['act']);
     }
 }
+
 
 $controllerName = ucfirst($controller).'Controller';
 
