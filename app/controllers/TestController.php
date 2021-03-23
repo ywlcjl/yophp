@@ -60,40 +60,6 @@ class TestController
         print_r($queryData);
     }
     
-    public function redis(){
-        $redis = new Redis();
-        $redis->connect('127.0.0.1', 6379);
-        $redis->setex("test", 3600, "Hello Redis");
-        echo $redis->get("test");
-        
-        $testModel = TestModel::getInstance();
-        
-        $result = $redis->get("result");
-        if(!$result) {
-            $result = $testModel->getResult(array('sex'=>1), 10, 0);
-            $redis->setex("result", 3600, serialize($result));
-        } else {
-            $result = unserialize($result);
-        }
-
-        
-        echo '<br>';
-        print_r($result);
-    }
-    
-    public function redisex() {
-        $redis = Yo_RedisEx::getInstance();
-        $testModel = TestModel::getInstance();
-        
-        $tests = $redis->get("test", true);
-        if(!$tests) {
-            $tests = $testModel->getResult(array('sex'=>2), 10, 0);
-            $redis->set("test", $tests, 3600);
-        }
-        
-        print_r($tests);
-    }
-    
     public function cache() {
         $cache = Yo_Cache::getInstance('apc', 'file');
         
