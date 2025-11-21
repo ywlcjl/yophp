@@ -12,13 +12,13 @@ Yophp is a simple high performance PHP MVC Framework.
 
 ## Installation
 
-* PHP 5.6 later, MySQL 5.5 later
-* create the host with this directory, the host name can use yophp.local
-* create database test, the charset is utf8
+* PHP 5.6 ~ 7.4, MySQL 5.5 ~ 8.0
+* create the host with this directory, the host name can use yophp.localhost
+* create database test, the charset is utf8 or utf8mb3
 * import the yophp.sql to test database
-* Visit the http://yophp.local
-* Visit other controller url like http://yophp.local/controller/action
-* Visit controller with Moudle url like http://yophp.local/module/controller/action
+* Visit the http://yophp.localhost
+* Visit other controller url like http://yophp.local/user/index
+* Visit controller with Moudle url like http://yophp.local/backend/home/index
 
 ## More Content
 

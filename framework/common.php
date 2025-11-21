@@ -10,10 +10,10 @@
  */
 function loadClass($className)
 {
-    //TestController.php 截取 Controller
+    //UserController.php 截取 Controller
 //    $controllerKey = substr($className, -10, 10);
 
-    //TestModel.php 截取Model
+    //UserModel.php 截取Model
     $modelKey = substr($className, -5, 5);
     
     //Yo_Model.php 截取Yo_

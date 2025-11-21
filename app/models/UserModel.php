@@ -1,12 +1,18 @@
 <?php
 
-class TestModel extends Yo_ModelBase
+class UserModel extends Yo_ModelBase
 {
     //模型表名
-    protected static $name = 'test';
+    protected static $name = 'user';
 
     //单例实例化
     private static $_instance;
+
+    public $_sexNames = array(
+        0 => "未设置",
+        1 => "男",
+        2 => "女"
+    );
     
     public function __construct()
     {
@@ -23,5 +29,15 @@ class TestModel extends Yo_ModelBase
         return self::$_instance;
     }
 
+    //sex名字定义
+    public function getSexName($key)
+    {
+        $sexName = "";
+        if(array_key_exists($key, $this->_sexNames)) {
+            $sexName = $this->_sexNames[$key];
+        }
+
+        return $sexName;
+    }
 }
 

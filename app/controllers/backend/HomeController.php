@@ -10,14 +10,14 @@ class HomeController
 
     public function index() {
         $data = array();
-        $testModel = TestModel::getInstance();
+        $userModel = UserModel::getInstance();
         
-        $tests = array();
-        $result = $testModel->getResult(array('sex'=>1, 'age >'=>18), 10, 0);
+        $users = array();
+        $result = $userModel->getResult(array('sex'=>1, 'age >'=>18), 10, 0);
         if($result) {
-            $tests = BaseLib::getInstance()->getKeyToName($result);
+            $users = BaseLib::getInstance()->getKeyToName($result);
         }
-        $data['tests'] = $tests;
+        $data['users'] = $users;
         
         view()->render('backend/home/index', $data);
     }

@@ -10,9 +10,10 @@ class HomeController
 
     public function index() {
         $data = array();
-        $testModel = TestModel::getInstance();
+        $userModel = UserModel::getInstance();
         
-        $data['test'] = $testModel->getResult(array('name like'=>'jacky'), 10, 0, 'id ASC');
+        $data['users'] = $userModel->getResult(array("id >="=>1), 10, 0, 'id DESC');
+        $data['sexNames'] = $userModel->_sexNames;
         $data['var'] = clean($_GET['var']);
         
         view()->render('home/index', $data);

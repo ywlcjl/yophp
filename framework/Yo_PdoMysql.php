@@ -23,7 +23,12 @@ class Yo_PdoMysql {
     public function getDb() {
         if (!$this->_dbh) {
             try {
-                $contect = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD);
+				//启用 PDO 持久连接
+				$driverOptions = array(
+                    PDO::ATTR_PERSISTENT => true
+                );
+				
+                $contect = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD, $driverOptions);
                 if ($contect) {
                     $this->_dbh = $contect;
                     $this->_dbh->query("SET NAMES 'UTF8'");

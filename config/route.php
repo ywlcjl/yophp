@@ -4,6 +4,6 @@
  * 路由映射
  */
 $route = array(
-    'jjj' => 'test/index',
-    'kkk' => 'backend/home/index'
+    'u' => 'user/index',
+    'admin' => 'backend/home/index'
 );
