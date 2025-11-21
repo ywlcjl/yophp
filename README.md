@@ -17,8 +17,8 @@ Yophp is a simple high performance PHP MVC Framework.
 * create database test, the charset is utf8 or utf8mb3
 * import the yophp.sql to test database
 * Visit the http://yophp.localhost
-* Visit other controller url like http://yophp.local/user/index
-* Visit controller with Moudle url like http://yophp.local/backend/home/index
+* Visit other controller url like http://yophp.localhost/user/index
+* Visit controller with Moudle url like http://yophp.localhost/backend/home/index
 
 ## More Content
 
