@@ -56,8 +56,8 @@ class ExampleController
         $exampleModel = ExampleModel::getInstance();
         $detail = array();
         if ($detailId > 0) {
-            $row = $exampleModel->getRow(array('id' => $detailId, 'status' => 1));
-            if (count($row) > 0) {
+            $row = $exampleModel->getRow(array('id' => $detailId));
+            if ($row) {
                 $detail = $row;
             }
         }
