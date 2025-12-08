@@ -14,9 +14,10 @@ A simple PHP framework with performance close to native PHP.
 
 * PHP 7.0 ~ 8.3 or newer, 
 * MySQL 5.7 ~ 8.0,
-* create the host with this directory, the host name can use yophp.localhost
-* create database yophp, the charset is utf8 or utf8mb3
-* import the yophp.sql to yophp database
+* Create the host with this directory, the host name can use yophp.localhost
+* The virtual host need support rewrited .htaccess file, because the url need to use. 
+* Create database yophp, the charset is utf8 or utf8mb3
+* Import the yophp.sql to yophp database
 * Visit local the http://yophp.localhost
 * Visit other controller url like http://yophp.localhost/example/index
 * Visit controller with Moudle url like http://yophp.localhost/backend/home/index
