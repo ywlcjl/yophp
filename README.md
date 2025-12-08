@@ -17,10 +17,10 @@ A simple PHP framework with performance close to native PHP.
 * create the host with this directory, the host name can use yophp.localhost
 * create database yophp, the charset is utf8 or utf8mb3
 * import the yophp.sql to yophp database
-* Visit the http://yophp.localhost
+* Visit local the http://yophp.localhost
 * Visit other controller url like http://yophp.localhost/example/index
 * Visit controller with Moudle url like http://yophp.localhost/backend/home/index
-* If you haven't configured a virtual host or not support .htaccess to rewrited, you can use source URL to visit your controller and actions. like this: http://localhost/yophp/index.php?c=home&a=index
+* If you haven't configured a virtual host or not support .htaccess to rewrited, you can use source URL to visit your controller and actions. like this: http://localhost/yophp/index.php?c=home&a=index But it is not a good practice.
 
 
 ## More Content
