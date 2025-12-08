@@ -134,7 +134,6 @@ class Yo_ModelBase
         }
 
         $sql = "INSERT INTO " .$this->tableName. "($fieldStr) VALUES($valueStr)";
-
         $insert = $this->db->exec($sql);
         return $insert;
     }

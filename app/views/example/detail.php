@@ -47,7 +47,7 @@
     </div>
 
     <div class="footer-area">
-        <div class="current-status"></div>
+        <div class="current-status"><a href="/example/edit/?id=<?php echo $detail['id'] ?>" class="back-link">Edit</a></div>
         <div>
             <a href="/" class="back-link">← Back</a>
         </div>

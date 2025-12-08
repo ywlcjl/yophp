@@ -6,13 +6,16 @@ class ExampleController
 {
     public function __construct()
     {
+        //加入自定义helper函数
+        include_once HELPER_DIR.'MyHelper.php';
     }
 
-    public function index() {
+    public function index()
+    {
         $data = array();
 
         $status = 1;
-        if(isset($_GET['status']) && $_GET['status'] !== '') {
+        if (isset($_GET['status']) && $_GET['status'] !== '') {
             $status = clean($_GET['status']);
         }
 
@@ -26,11 +29,12 @@ class ExampleController
         $data['status'] = $status;
         $data['statuss'] = $exampleModel->_statuss;
         $data['title'] = 'Yophp Example Index';
-        
+
         view()->render('example/index', $data);
     }
 
-    public function json() {
+    public function json()
+    {
         $response = array('message' => 'hello message', 'code' => 200);
         view()->json($response);
     }
@@ -41,10 +45,10 @@ class ExampleController
 
         $detailId = uri(2);
         //先查路由映射
-        if(!is_numeric($detailId)) {
+        if (!is_numeric($detailId)) {
             //查不到再查普通入口
             $detailId = uri(3);
-            if(!is_numeric($detailId)) {
+            if (!is_numeric($detailId)) {
                 $detailId = 0;
             }
         }
@@ -66,36 +70,133 @@ class ExampleController
 
     }
 
-    public function crud() {
+    public function edit()
+    {
         $data = array();
-        
-        $userModel = UserModel::getInstance();
-        
-        $data['user'] = $userModel->getRow(array('name'=>'jacky12'));
-        
-        $data['result'] = $userModel->getResult(array('sex in'=>array(1,2), 'name like'=>'jacky', 'age >'=>17), 10, 0, 'id DESC');
-        
-        $data['count'] = $userModel->count(array('sex'=>1));
+        $exampleModel = ExampleModel::getInstance();
 
-        $sql = "SELECT * FROM user WHERE sex=2 ORDER BY id ASC LIMIT 1";
-        $data['sql'] = $sql;
-        $data['queryData'] = $userModel->query($sql);
+        $id = isset($_GET['id']) ? intval($_GET['id']) : '';
+        $detail = array();
 
-        $userNameArray = array('jack', 'tom', 'mike', 'rose', 'bong', 'zero', 'rick', 'viter', 'saw', 'ray');
-        $insertParam = array('name'=>$userNameArray[rand(0,9)].rand(100,1000), 'age'=>rand(16,30),'sex'=>rand(1,2), 'update_time'=>date('Y-m-d H:i:s'));
-        $insert = $userModel->insert($insertParam);
-        $data['insertId'] = $userModel->insertId();
+        if ($id > 0) {
+            //编辑example
+            $param = array('id' => $id);
+            $row = $exampleModel->getRow($param);
+            if ($row) {
+                $detail = $row;
 
-        $updateParam = array('name'=>'lose'.rand(1000, 2000), 'update_time'=>date('Y-m-d H:i:s'));
-        $data['update'] = $userModel->update($updateParam, array('id'=>3));
+            }
+        } else {
+            //新增
+        }
 
-        //$deleteParam = array('name like'=>'jacky', 'id'=>28);
-        //$delete = $userModel->delete($deleteParam);
+        $data['id'] = $id;
+        $data['detail'] = $detail;
+        $data['statuss'] = $exampleModel->_statuss;
+        $titleSuffix = $id > 0 ? 'Edit' : 'Add';
+        $data['title'] = "Yophp Example $titleSuffix";
 
-        view()->render('example/crud', $data);
+        view()->render('example/edit', $data);
     }
-    
-    public function sql() {
+
+    public function save()
+    {
+        $data = array();
+        $success = 0;
+        $message = '';
+
+        if (isset($_POST) && !empty($_POST)) {
+            $exampleModel = ExampleModel::getInstance();
+
+            $id = isset($_POST['id']) ? intval($_POST['id']) : '';
+            $name = isset($_POST['name']) ? clean($_POST['name']) : '';
+            $status = isset($_POST['status']) ? intval($_POST['status']) : '';
+            $descTxt = isset($_POST['desc_txt']) ? clean($_POST['desc_txt']) : '';
+
+            $inputParam = array();
+            if(!$name) {
+                $message = 'the name is empty';
+            }elseif(!$descTxt) {
+                $message = 'the descTxt is empty';
+            }elseif($status ==='') {
+                $message = 'the status is empty';
+            } else {
+                $inputParam['name'] = $name;
+                $inputParam['desc_txt'] = $descTxt;
+                $inputParam['status'] = $status;
+
+                $affected = '';
+                if($id >0) {
+                    //编辑现有条目
+                    $whereParam['id'] = $id;
+                    $inputParam['update_time'] = date('Y-m-d H:i:s');
+                    $affected = $exampleModel->update($inputParam, $whereParam);
+                } else {
+                    //新增条目
+                    $affected = $exampleModel->insert($inputParam);
+                }
+
+                if ($affected) {
+                    $success = 1;
+                    if ($id >0) {
+                        $message = 'edit success';
+                    } else {
+                        $message = 'add success';
+                    }
+                } else {
+                    $message = 'save fail or no affected';
+                }
+            }
+
+            if($success) {
+                go_url("/example/page/?success=$success&message=$message");
+            } else {
+                $detail= array(
+                    'id' => $id,
+                    'name' => $name,
+                    'desc_txt' => $descTxt,
+                    'status' => $status
+                );
+
+                $data['detail'] = $detail;
+                $data['statuss'] = $exampleModel->_statuss;
+                $titleSuffix = $id > 0 ? 'Edit' : 'Add';
+                $data['title'] = "Yophp Example $titleSuffix";
+                $data['success'] = $success;
+                $data['message'] = $message;
+                view()->render('example/edit', $data);
+            }
+
+        } else {
+            die("Input error");
+        }
+    }
+
+    public function delete()
+    {
+        $data = array();
+        $message = '';
+        $success = 0;
+
+        $id = intval($_GET['id']);
+
+        $exampleModel = ExampleModel::getInstance();
+
+        if ($id > 0) {
+            $param = array('id'=>$id);
+            $delete = $exampleModel->delete($param);
+            if ($delete) {
+                $success = 1;
+            }
+        } else {
+            $message = 'Input id incorrect';
+        }
+
+        go_url("/example/page/?success=$success&message=$message");
+    }
+
+    public function sql()
+    {
         $data = array();
         $exampleModel = ExampleModel::getInstance();
 
@@ -112,12 +213,13 @@ class ExampleController
 
         view()->render('example/sql', $data);
     }
-    
-    public function cache() {
+
+    public function cache()
+    {
         $data = array();
 
         $cache = Yo_Cache::getInstance('apcu', 'file');
-        
+
         $exampleModel = ExampleModel::getInstance();
 
         $exampleCacheKey = 'examples_cache';
@@ -126,8 +228,8 @@ class ExampleController
         $success = 0;
 
         $examples = $cache->get($exampleCacheKey);
-        if(!$examples) {
-            $examples = $exampleModel->getResult(array('status'=>1), 10, 0, "id DESC");
+        if (!$examples) {
+            $examples = $exampleModel->getResult(array('status' => 1), 10, 0, "id DESC");
 
             $cache->save($exampleCacheKey, $examples, 3600); //缓存时间单位是秒
             $message = 'create examples catch';
@@ -135,7 +237,7 @@ class ExampleController
             $message = 'found examples catch';
         }
 
-        if($examples) {
+        if ($examples) {
             $success = 1;
         }
 
@@ -147,18 +249,19 @@ class ExampleController
 
         view()->json($data);
     }
-    
-    public function cacheRedis() {
+
+    public function cacheRedis()
+    {
         $cache = Yo_Cache::getInstance('redis', 'file');
-        
+
         $exampleModel = ExampleModel::getInstance();
 
         $exampleCacheKey = 'examples_redis_cache';
         $message = "";
 
         $examples = $cache->get($exampleCacheKey);
-        if(!$examples) {
-            $examples = $exampleModel->getResult(array('status'=>1), 5, 0, "id DESC");
+        if (!$examples) {
+            $examples = $exampleModel->getResult(array('status' => 1), 5, 0, "id DESC");
             $cache->save($exampleCacheKey, $examples, 3600);
             $message = 'create redis cache';
         } else {
@@ -167,7 +270,7 @@ class ExampleController
 
         $success = 0;
 
-        if($examples) {
+        if ($examples) {
             $success = 1;
         }
 
@@ -179,15 +282,16 @@ class ExampleController
 
         view()->json($data);
     }
-    
-    public function page() {
+
+    public function page()
+    {
         $data = array();
         $exampleModel = ExampleModel::getInstance();
 
         $paramInput = array();
 
         $status = '';
-        if(isset($_GET['status']) && $_GET['status'] !== '') {
+        if (isset($_GET['status']) && $_GET['status'] !== '') {
             $status = clean($_GET['status']);
             $paramInput['status'] = $status;
         }
@@ -201,18 +305,21 @@ class ExampleController
         $data['statuss'] = $exampleModel->_statuss;
         $data['title'] = 'Yophp Example Page';
         $data['pageUrl'] = $pageUrl;
-        
+        $data['success'] = $_GET['success'];
+        $data['message'] = $_GET['message'];
+
         view()->render('example/page', $data);
     }
-    
-    public function pagesql() {
+
+    public function pagesql()
+    {
         $data = array();
         $exampleModel = ExampleModel::getInstance();
 
         $status = '';
         $whereSql = '';
 
-        if(isset($_GET['status']) && $_GET['status'] !== '') {
+        if (isset($_GET['status']) && $_GET['status'] !== '') {
             $status = clean($_GET['status']);
             $whereSql = "AND `status`=$status";
         }
@@ -226,7 +333,7 @@ class ExampleController
         //echo $sql;
         $pageUrl = '/example/pagesql';
 
-        $examples = $exampleModel->getPageSql($sql,$pageUrl, 5, $suffix);
+        $examples = $exampleModel->getPageSql($sql, $pageUrl, 5, $suffix);
         $data['examples'] = $examples;
         $data['sql'] = $sql;
         $data['status'] = $status;

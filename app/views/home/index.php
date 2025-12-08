@@ -18,7 +18,7 @@
             <a href="/example/index">controller example index</a>
             <a href="/example/json" target="_blank">test json</a>
             <a href="/example/detail/1">test detail</a>
-            <a href="/example/crud">test crud</a>
+            <a href="/example/edit">test save</a>
             <a href="/example/sql">test sql</a>
             <a href="/example/cache" target="_blank">test cache</a>
             <a href="/example/cacheRedis" target="_blank">test redis cache</a>

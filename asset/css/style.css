@@ -235,3 +235,124 @@ body {
 .pageLink:hover {
     background-color: #e9ecef;
 }
+
+
+.alert {
+    padding: 10px 15px;
+    margin: 15px 0;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    /* 确保它占据一行，并且在页面中居中显示时表现正常 */
+    width: fit-content;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.alert-success {
+    border: 1px solid #28a745; /* 深绿色边框 */
+    background-color: #d4edda; /* 浅绿色背景 */
+    color: #155724; /* 深绿色文字 */
+}
+
+.alert-error {
+    border: 1px solid #dc3545; /* 红色边框 */
+    background-color: #f8d7da; /* 浅红色背景 */
+    color: #721c24; /* 深红色文字 */
+}
+
+.alert-warning {
+    border: 1px solid #ffc107; /* 橙色边框 */
+    background-color: #fff3cd; /* 浅黄色背景 */
+    color: #856404; /* 深黄色文字 */
+}
+
+.alert-info {
+    border: 1px solid #007bff; /* 蓝色边框 */
+    background-color: #cce5ff; /* 浅蓝色背景 */
+    color: #004085; /* 深蓝色文字 */
+}
+
+/* 容器基础样式 */
+.form-container {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+/* 标题样式 */
+.form-container h3 {
+    margin-top: 0;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    color: #007bff;
+}
+
+/* 字段组样式 (用于替代 ul/li) */
+.form-field-group {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center; /* 默认居中对齐，文本域除外 */
+}
+
+/* 标签样式 */
+.form-field-group label {
+    width: 100px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* 文本域特殊处理（标签顶部对齐） */
+.form-field-group textarea + label {
+    padding-top: 10px;
+}
+.form-field-group textarea,
+.form-field-group select {
+    align-self: flex-start; /* 将文本域和标签对齐在顶部 */
+}
+
+/* 输入框、文本域、选择框的通用样式 */
+.form-field-group input[type="text"],
+.form-field-group textarea,
+.form-field-group select {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* 保证 padding 和 border 不增加元素总宽度 */
+}
+
+/* 文本域特有样式 */
+.form-field-group textarea {
+    resize: vertical;
+}
+
+/* 选择框特有样式 */
+.form-field-group select {
+    background-color: #f9f9f9;
+}
+
+/* 提交按钮容器 */
+.submit-container {
+    text-align: center;
+    margin-top: 25px;
+}
+
+/* 提交按钮样式 */
+.submit-container button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #28a745; /* 绿色按钮 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}

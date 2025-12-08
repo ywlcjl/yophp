@@ -10,21 +10,18 @@
  */
 function loadClass($className)
 {
-    //UserController.php 截取 Controller
-//    $controllerKey = substr($className, -10, 10);
-
     //UserModel.php 截取Model
     $modelKey = substr($className, -5, 5);
-    
+
     //Yo_Model.php 截取Yo_
     $frameworklKey = substr($className, 0, 3);
-    
-    if($modelKey == 'Model') {
-        $file = APP_DIR . 'models/'.$className.'.php';
+
+    if ($modelKey == 'Model') {
+        $file = APP_DIR . 'models/' . $className . '.php';
         if (file_exists($file)) {
             include_once $file;
         }
-    } elseif($frameworklKey == 'Yo_') {
+    } elseif ($frameworklKey == 'Yo_') {
         //加载框架类
         $file = FRAMEWORK_DIR . $className . '.php';
         if (file_exists($file)) {
@@ -44,9 +41,10 @@ function loadClass($className)
  * @param type $str
  * @return type
  */
-function clean($str) {
+function clean($str)
+{
     $str = trim($str);
-    
+
     $str = htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
     //添加转义
     $str = addslashes($str);
@@ -58,7 +56,8 @@ function clean($str) {
  * @param type $num
  * @return type
  */
-function uri($num='') {
+function uri($num = '')
+{
     $uris = array();
     $uriStr = $_SERVER['REQUEST_URI'];
 
@@ -67,7 +66,7 @@ function uri($num='') {
     if ($uriStrT !== false) {
         $uriStr = $uriStrT;
     }
-    
+
     $uriT = explode('/', $uriStr);
     if ($uriT) {
         foreach ($uriT as $key => $value) {
@@ -77,8 +76,8 @@ function uri($num='') {
         }
     }
 
-    if($num) {
-        return isset($uris[$num-1]) ? $uris[$num-1] : '';
+    if ($num) {
+        return isset($uris[$num - 1]) ? $uris[$num - 1] : '';
     } else {
         return $uris;
     }
@@ -88,6 +87,17 @@ function uri($num='') {
  * 获取视图对象
  * @return Yo_View
  */
-function view() {
+function view()
+{
     return Yo_View::getInstance();
+}
+
+/**
+ * 跳转链接
+ * @param type $url
+ */
+function go_url($url)
+{
+    header("Location:$url");
+    exit;
 }
