@@ -1,37 +1,38 @@
 <?php view()->render('_header', array(
-        'title' => 'Yophp home'
+        'title' => $title.' Index',
 )); ?>
 
-    <h1>Yophp Index</h1>
-    <div>User data:</div>
-    <div>
-        <?php if ($users): ?>
-            <ul>
-                <?php foreach ($users as $key => $value): ?>
-                    <li><?php echo $value['name'] ?> - <?php echo $value['age'] ?>岁
-                        - <?php echo $sexNames[$value['sex']] ?></li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-    </div>
+        <h1 class="main-title">
+            <?php echo $title?>
+        </h1>
 
-    <div><?php echo $var ?></div>
+        <div class="slogan">
+            A simple PHP framework with performance close to native PHP.
+        </div>
 
-    <h3>Test User</h3>
-    <div>
-        <a href="<?php echo APP_URL ?>/user/index">controller user index</a>&nbsp;
-        <a href="<?php echo APP_URL ?>/user/crud">test crud</a>&nbsp;
-        <a href="<?php echo APP_URL ?>/user/sql">test sql</a>&nbsp;
-        <a href="<?php echo APP_URL ?>/user/cache">test cache</a>&nbsp;
-        <a href="<?php echo APP_URL ?>/user/cacheRedis">test cacheRedis</a>&nbsp;
-        <a href="<?php echo APP_URL ?>/user/page">test page</a>&nbsp;
-        <a href="<?php echo APP_URL ?>/user/pagesql/?sex=1">test pagesql</a>&nbsp;
-        <a href="<?php echo APP_URL ?>/u">test router</a>&nbsp;
-    </div>
-    <div>
-        <p>&nbsp;</p>
-        <p><a href="<?php echo APP_URL ?>/backend/home">go backend</a></p>
-        <p>&nbsp;</p>
-    </div>
+        <h3 class="section-title">
+            🚀 Test Examples
+        </h3>
+
+        <div class="link-group">
+            <a href="/example/index">controller example index</a>
+            <a href="/example/json" target="_blank">test json</a>
+            <a href="/example/detail/1">test detail</a>
+            <a href="/example/crud">test crud</a>
+            <a href="/example/sql">test sql</a>
+            <a href="/example/cache" target="_blank">test cache</a>
+            <a href="/example/cacheRedis" target="_blank">test redis cache</a>
+            <a href="/example/page">test page</a>
+            <a href="/example/pagesql">test pagesql</a>
+            <a href="/e/2">test router</a>
+        </div>
+
+        <div class="backend-area">
+            <p>
+                <a href="/backend/home">
+                    ➡️ Go Backend
+                </a>
+            </p>
+        </div>
 
 <?php view()->render('_footer'); ?>

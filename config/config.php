@@ -1,17 +1,19 @@
 <?php
-
 /**
- * 配置文件
+ * Config
  */
 
-//Mysql账号配置
+//Mysql database
 define('DB_HOST', '127.0.0.1');
 define('DB_USER', 'root');
 define('DB_PASSWORD', '8888');
 define('DB_NAME', 'yophp');
 
-//host域名设置 *
-define('APP_URL', 'http://yophp.localhost');
+//hosting * example http://yophp.localhost
+define('APP_DOMAIN', 'http://yophp.localhost');
 
-//开发模式development, testing, production
-define('DEBUG_MODE', 'development');
+//timezone
+define('TIMEZONE', 'Asia/Shanghai');
+
+//debug, testing, product, Show the php error message level
+define('DEBUG_MODE', 'debug');

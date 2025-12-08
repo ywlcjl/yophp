@@ -10,16 +10,18 @@ class Yo_Cache {
     private static $_instance;
     protected $_cache;
     protected $_cacheDrivers = array(
-        'apc',
+        'apcu',
         'redis',
         'file'
     );
     
     protected $_mainDriver;
     protected $_backupDriver;
-//    protected $_adapter;
     //前序符号
-    private $key_prefix = '';
+    private $_keyPrefix = '';
+
+    //当前使用的驱动
+    public $_currentDriver;
     
     public function __construct($mainDriver, $backupDriver) {
         if (!$this->_cache) {
@@ -27,17 +29,17 @@ class Yo_Cache {
             $this->_mainDriver = $mainDriver;
             $this->_backupDriver = $backupDriver;
             
-            $mainDriverClassName = 'Yo_' . ucfirst($mainDriver) . 'Driver';
+            $mainDriverClassName = 'Yo_Cache' . ucfirst($mainDriver) . 'Driver';
             $cache = new $mainDriverClassName();
             if (is_object($cache) && $cache->is_supported()) {
-//                $this->_adapter = $mainDriver;
                 $this->_cache = $cache;
+                $this->_currentDriver = $mainDriver;
             } else {
-                $backupDriverClassName = 'Yo_' . ucfirst($backupDriver) . 'Driver';
+                $backupDriverClassName = 'Yo_Cache' . ucfirst($backupDriver) . 'Driver';
                 $cache = new $backupDriverClassName();
                 if (is_object($cache) && $cache->is_supported()) {
-//                    $this->_adapter = $backupDriver;
                     $this->_cache = $cache;
+                    $this->_currentDriver = $backupDriver;
                 } else {
                     print('no cache driver supported.');
                 }
@@ -57,7 +59,7 @@ class Yo_Cache {
     }
 
     public function get($id) {
-        return $this->_cache->get($this->key_prefix . $id);
+        return $this->_cache->get($this->_keyPrefix . $id);
     }
     
     /**
@@ -70,11 +72,11 @@ class Yo_Cache {
      * @return	bool	TRUE on success, FALSE on failure
      */
     public function save($id, $data, $ttl = 60, $raw = FALSE) {
-        return $this->_cache->save($this->key_prefix . $id, $data, $ttl, $raw);
+        return $this->_cache->save($this->_keyPrefix . $id, $data, $ttl, $raw);
     }
 
     public function delete($id) {
-        return $this->_cache->delete($this->key_prefix . $id);
+        return $this->_cache->delete($this->_keyPrefix . $id);
     }
 
     public function clean() {
@@ -84,6 +86,8 @@ class Yo_Cache {
     public function cache_info($type = 'user') {
         return $this->_cache->cache_info($type);
     }
+
+
 
     
 }

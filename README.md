@@ -1,25 +1,27 @@
-# Yophp Framework
+# Yophp
 
-Yophp is a simple high performance PHP MVC Framework.
+A simple PHP framework with performance close to native PHP.
 
 ## Features
 
-* Supports complete mvc development model
+* Support mvc development model
 * Close to the execution efficiency of native PHP
-* Full MySQL model function
+* Support MySQL active record model function
 * Support for controller module folders
-* Provide redis convenience functions
+* Provide cache by apcu, redis convenience functions
 
 ## Installation
 
-* PHP 5.6 ~ 7.4, MySQL 5.5 ~ 8.0
+* PHP 7.0 ~ 8.3 or newer, 
+* MySQL 5.7 ~ 8.0,
 * create the host with this directory, the host name can use yophp.localhost
-* create database test, the charset is utf8 or utf8mb3
-* import the yophp.sql to test database
+* create database yophp, the charset is utf8 or utf8mb3
+* import the yophp.sql to yophp database
 * Visit the http://yophp.localhost
-* Visit other controller url like http://yophp.localhost/user/index
+* Visit other controller url like http://yophp.localhost/example/index
 * Visit controller with Moudle url like http://yophp.localhost/backend/home/index
+* If you haven't configured a virtual host or not support .htaccess to rewrited, you can use source URL to visit your controller and actions. like this: http://localhost/yophp/index.php?c=home&a=index
+
 
 ## More Content
-
-* You need read the source code. The code is simple and easy to understand.
+* This framework is for testing purposes only. If you want to use it in a production environment, please read the source code to ensure the security of your product.

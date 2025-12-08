@@ -10,12 +10,9 @@ class HomeController
 
     public function index() {
         $data = array();
-        $userModel = UserModel::getInstance();
-        
-        $data['users'] = $userModel->getResult(array("id >="=>1), 10, 0, 'id DESC');
-        $data['sexNames'] = $userModel->_sexNames;
-        $data['var'] = clean($_GET['var']);
-        
+        $data['title'] = 'Yophp';
+
         view()->render('home/index', $data);
     }
+
 }

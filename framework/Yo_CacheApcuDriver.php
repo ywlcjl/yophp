@@ -4,7 +4,7 @@
  * apc缓存处理
  */
 
-class Yo_ApcDriver extends Yo_CacheDriver {
+class Yo_CacheApcuDriver extends Yo_CacheDriver {
 
     public function __construct() {
         if (!$this->is_supported()) {
@@ -23,7 +23,7 @@ class Yo_ApcDriver extends Yo_CacheDriver {
      */
     public function get($id) {
         $success = FALSE;
-        $data = apc_fetch($id, $success);
+        $data = apcu_fetch($id, $success);
 
         return ($success === TRUE) ? $data : FALSE;
     }
@@ -38,7 +38,7 @@ class Yo_ApcDriver extends Yo_CacheDriver {
      * @return	bool	TRUE on success, FALSE on failure
      */
     public function save($id, $data, $ttl = 60, $raw = FALSE) {
-        return apc_store($id, $data, (int) $ttl);
+        return apcu_store($id, $data, (int) $ttl);
     }
 
     /**
@@ -48,7 +48,7 @@ class Yo_ApcDriver extends Yo_CacheDriver {
      * @return	bool	true on success/false on failure
      */
     public function delete($id) {
-        return apc_delete($id);
+        return apcu_delete($id);
     }
 
     /**
@@ -57,7 +57,7 @@ class Yo_ApcDriver extends Yo_CacheDriver {
      * @return	bool	false on failure/true on success
      */
     public function clean() {
-        return apc_clear_cache('user');
+        return apcu_clear_cache('user');
     }
 
     /**
@@ -67,7 +67,7 @@ class Yo_ApcDriver extends Yo_CacheDriver {
      * @return	mixed	array on success, false on failure
      */
     public function cache_info($type = NULL) {
-        return apc_cache_info($type);
+        return apcu_cache_info($type);
     }
 
     /**
@@ -78,7 +78,7 @@ class Yo_ApcDriver extends Yo_CacheDriver {
      * @return	bool
      */
     public function is_supported() {
-        return (extension_loaded('apc') && ini_get('apc.enabled'));
+        return (extension_loaded('apcu'));
     }
 
 }

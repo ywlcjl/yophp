@@ -1,3 +1,237 @@
+/* 基础样式和布局 */
 body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 标题样式 */
+.main-title {
+    color: #007bff;
+    text-align: center;
+    border-bottom: 3px solid #007bff;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* 简介样式 */
+.slogan {
+    text-align: center;
+    margin: 20px 0;
+    font-style: italic;
+    color: #555;
+}
+
+/* 示例标题样式 */
+.section-title {
+    color: #333;
+    margin-top: 30px;
+    border-left: 5px solid #ff9800;
+    padding-left: 10px;
+}
+
+/* 链接组容器样式 */
+.link-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #e9ecef;
+    border-radius: 6px;
+    justify-content: flex-start; /* 保持左对齐 */
+}
+
+/* 链接按钮基础样式 */
+.link-group a {
+    text-decoration: none;
+    padding: 8px 15px;
+    color: white; /* 默认白色文字 */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap; /* 防止链接文字换行 */
+}
+
+/* 链接按钮颜色定义 */
+.link-group a:nth-child(1) {
+    background-color: #28a745;
+}
+
+/* Green */
+.link-group a:nth-child(2) {
+    background-color: #dc3545;
+}
+
+/* Red */
+.link-group a:nth-child(3) {
+    background-color: #007bff;
+}
+
+/* Blue */
+.link-group a:nth-child(4), .link-group a:nth-child(5) {
+    background-color: #17a2b8;
+}
+
+/* Cyan */
+.link-group a:nth-child(6), .link-group a:nth-child(7) {
+    background-color: #ffc107;
+    color: #333; /* 浅色背景使用深色文字 */
+}
+
+/* Yellow/Orange */
+.link-group a:nth-child(8), .link-group a:nth-child(9), .link-group a:nth-child(10) {
+    background-color: #6c757d;
+}
+
+/* Gray */
+
+/* 后台链接区域样式 */
+.backend-area {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+}
+
+/* 后台链接按钮样式 */
+.backend-area a {
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: #000;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    display: inline-block; /* 确保 padding 和 margin 生效 */
+}
+
+
+/* 表格容器 */
+.data-table-container {
+    margin-bottom: 20px;
+}
+
+/* 表格基础样式 */
+.data-table {
     width: 100%;
+    border-collapse: collapse; /* 消除单元格间距 */
+    text-align: left;
+}
+
+/* 表格头部样式 */
+.data-table thead tr {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.data-table th {
+    text-align: center;
+    padding: 12px 15px;
+    color: #495057;
+    font-weight: normal; /* 减轻表头字体重量 */
+}
+
+/* 表格行样式 */
+.data-table tbody tr {
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* 隔行变色 */
+.data-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* 单元格样式 */
+.data-table td {
+    text-align: center;
+    padding: 10px 15px;
+}
+
+/* 特定列样式 */
+.status-enabled {
+    color: #28a745; /* 绿色 */
+    font-weight: bold;
+}
+.time-text {
+    color: #6c757d; /* 灰色时间文本 */
+}
+
+/* 底部区域（状态和链接） */
+.footer-area {
+    padding-top: 15px;
+    border-top: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.current-status {
+    font-weight: bold;
+    color: #6c757d;
+}
+
+/* 返回链接按钮样式 */
+.back-link {
+    text-decoration: none;
+    padding: 8px 15px;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 5px;
+    display: inline-block; /* 确保 padding 生效 */
+}
+
+/* 容器样式 */
+.pagination-container {
+    text-align: center; /* 居中分页条 */
+    margin: 20px 0;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+/* 通用链接和页码按钮样式 */
+.pageLink,
+.pagination-container b {
+    display: inline-block; /* 让元素像按钮一样对齐 */
+    padding: 6px 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+/* 普通链接样式（First, Next, Last, 普通页码） */
+.pageLink {
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    color: #333;
+}
+
+/* 特殊导航链接样式 (First/Next/Last) */
+.pagination-container .pageLink[href*="?status=1"] {
+    /* 针对有参数的链接应用稍微不同的背景，但保持兼容性 */
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+/* 当前页码样式 (粗体 <b>) */
+.pagination-container b {
+    border: 1px solid #007bff; /* 蓝色边框 */
+    background-color: #007bff; /* 蓝色背景 */
+    color: white; /* 白色文字 */
+    font-weight: bold;
+}
+
+/* 链接 hover 效果（可选，但增强用户体验） */
+.pageLink:hover {
+    background-color: #e9ecef;
 }

@@ -19,12 +19,6 @@ function loadClass($className)
     //Yo_Model.php 截取Yo_
     $frameworklKey = substr($className, 0, 3);
     
-//    if($controllerKey == 'Controller') {
-//        $file = APP_DIR . 'controllers/'.$className.'.php';
-//        if (file_exists($file)) {
-//            include_once $file;
-//        }
-//    } else
     if($modelKey == 'Model') {
         $file = APP_DIR . 'models/'.$className.'.php';
         if (file_exists($file)) {
@@ -52,6 +46,8 @@ function loadClass($className)
  */
 function clean($str) {
     $str = trim($str);
+    
+    $str = htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
     //添加转义
     $str = addslashes($str);
     return $str;
@@ -65,8 +61,8 @@ function clean($str) {
 function uri($num='') {
     $uris = array();
     $uriStr = $_SERVER['REQUEST_URI'];
-    
-    ////带参数的链接 /home/index/?page=1 去掉?后面的
+
+    //带参数的链接 /home/index/?page=1 去掉?后面的
     $uriStrT = stristr($_SERVER['REQUEST_URI'], '?', true);
     if ($uriStrT !== false) {
         $uriStr = $uriStrT;
@@ -82,7 +78,7 @@ function uri($num='') {
     }
 
     if($num) {
-        return $uris[$num-1];
+        return isset($uris[$num-1]) ? $uris[$num-1] : '';
     } else {
         return $uris;
     }

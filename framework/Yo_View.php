@@ -6,7 +6,7 @@ class Yo_View
     
     private static $_instance;
     
-    private $_page;
+    private $_pageNav;
 
     public function __construct() {
         
@@ -33,16 +33,26 @@ class Yo_View
         
         if(file_exists($viewFile)) {
             include $viewFile;
-            
         }
     }
-    
-    public function getPage() {
-        return $this->_page;
+
+    /**
+     * 输出json
+     * @param $response
+     * @return void
+     */
+    public function json($response=array())
+    {
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
     
-    public function setPage($str) {
-        $this->_page = $str;
+    public function getPageNav() {
+        return $this->_pageNav;
     }
     
+    public function setPageNav($str) {
+        $this->_pageNav = $str;
+    }
+
 }

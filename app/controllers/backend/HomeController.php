@@ -10,14 +10,8 @@ class HomeController
 
     public function index() {
         $data = array();
-        $userModel = UserModel::getInstance();
-        
-        $users = array();
-        $result = $userModel->getResult(array('sex'=>1, 'age >'=>18), 10, 0);
-        if($result) {
-            $users = BaseLib::getInstance()->getKeyToName($result);
-        }
-        $data['users'] = $users;
+
+        $data['title'] = 'Yophp Backend Index';
         
         view()->render('backend/home/index', $data);
     }

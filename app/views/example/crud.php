@@ -4,7 +4,7 @@
 $userModel = UserModel::getInstance();
 ?><h1>Test Crud:</h1>
 
-    <div>getRow: <?php echo $user['name']; ?></div>
+    <div class="slogan">getRow: <?php echo $user['name']; ?></div>
 
     <div>
         getResult: <?php echo $user['name']; ?>

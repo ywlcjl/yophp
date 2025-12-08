@@ -1,6 +1,6 @@
 <?php
 
-class Yo_FileDriver extends Yo_CacheDriver {
+class Yo_CacheFileDriver extends Yo_CacheDriver {
 
     /**
      * Directory in which to save cache files

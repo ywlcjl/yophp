@@ -1,6 +1,6 @@
 <?php
 
-class Yo_RedisDriver extends Yo_CacheDriver {
+class Yo_CacheRedisDriver extends Yo_CacheDriver {
     
     protected $_host = '127.0.0.1';
     protected $_port = 6379;
