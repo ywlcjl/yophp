@@ -11,7 +11,7 @@
  Target Server Version : 80044
  File Encoding         : 65001
 
- Date: 08/12/2025 21:34:31
+ Date: 21/12/2025 16:07:17
 */
 
 SET NAMES utf8mb4;
@@ -23,8 +23,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `example`;
 CREATE TABLE `example`  (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT '',
-  `desc_txt` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '',
+  `desc_txt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   `status` tinyint NULL DEFAULT 0,
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -34,7 +34,7 @@ CREATE TABLE `example`  (
 -- ----------------------------
 -- Records of example
 -- ----------------------------
-INSERT INTO `example` VALUES (1, 'ray753ff', '170', 0, '2025-12-08 21:29:52', '2025-11-21 20:46:15');
+INSERT INTO `example` VALUES (1, 'ray753ffl', '1700', 0, '2025-12-21 15:35:00', '2025-11-21 20:46:15');
 INSERT INTO `example` VALUES (2, 'rose366', '18', 1, '2025-12-08 13:31:59', '2025-11-21 20:46:20');
 INSERT INTO `example` VALUES (3, 'lose1499', '26', 1, '2025-12-08 13:31:59', '2025-11-21 20:46:22');
 INSERT INTO `example` VALUES (4, 'jack637', '17', 1, '2025-12-08 13:31:59', '2025-11-21 20:46:26');
@@ -83,6 +83,6 @@ INSERT INTO `example` VALUES (46, 'saw637', '26', 1, '2025-12-08 13:31:59', '202
 INSERT INTO `example` VALUES (47, 'tom684', '18', 1, '2025-12-08 13:31:59', '2025-11-21 20:52:14');
 INSERT INTO `example` VALUES (48, 'jack495', '26', 1, '2025-12-08 13:31:59', '2025-11-21 20:52:15');
 INSERT INTO `example` VALUES (49, 'mike695', '4545', 0, '2025-12-08 21:33:29', '2025-11-21 20:52:15');
-INSERT INTO `example` VALUES (50, 'dsds566', '309', 1, '2025-12-08 21:33:26', '2025-11-21 20:52:16');
+INSERT INTO `example` VALUES (50, 'mic763', '456', 2, '2025-12-21 16:06:57', '2025-12-21 15:43:07');
 
 SET FOREIGN_KEY_CHECKS = 1;

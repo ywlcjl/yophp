@@ -305,8 +305,8 @@ class ExampleController
         $data['statuss'] = $exampleModel->_statuss;
         $data['title'] = 'Yophp Example Page';
         $data['pageUrl'] = $pageUrl;
-        $data['success'] = $_GET['success'];
-        $data['message'] = $_GET['message'];
+        $data['success'] = $_GET['success']??'';
+        $data['message'] = $_GET['message']??'';
 
         view()->render('example/page', $data);
     }
@@ -327,7 +327,7 @@ class ExampleController
         $suffix = "/?status=$status";
 
         //注意SELECT id, name, desc_txt, `status`, create_time FROM example, FROM不要换行, 否则匹配不到正则表达字符替换
-        $sql = "SELECT id, name, desc_txt, `status`, create_time FROM example 
+        $sql = "SELECT id, name, desc_txt, `status`, update_time, create_time FROM example 
                 WHERE 1=1 $whereSql 
                 ORDER BY id ASC";
         //echo $sql;

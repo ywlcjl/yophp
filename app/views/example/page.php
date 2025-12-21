@@ -11,7 +11,7 @@
 <?php endif;?>
 
     <div class="data-table-container">
-        <?php if ($examples): ?>
+        <?php if (isset($examples) && $examples): ?>
             <table class="data-table">
                 <thead>
                 <tr>

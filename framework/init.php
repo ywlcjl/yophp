@@ -97,17 +97,17 @@ if(isset($uris[0]) && $uris[0] != 'index.php') {
     //没有路径参数,则查找输入参数 http://yophp.localhost/index.php?m=&c=&a=
     //手动获得module
     if (isset($_REQUEST['m'])) {
-        $module = clean($_REQUEST['m']);
+        $module = cleanRoute($_REQUEST['m']);
     }
 
     //手动获得controller
     if (isset($_REQUEST['c'])) {
-        $controller = clean($_REQUEST['c']);
+        $controller = cleanRoute($_REQUEST['c']);
     }
 
     //手动获得action
     if (isset($_REQUEST['a'])) {
-        $action = clean($_REQUEST['a']);
+        $action = cleanRoute($_REQUEST['a']);
     }
 }
 
@@ -117,11 +117,15 @@ $controllerName = ucfirst($controller).'Controller';
 $moduleDir = $module ? "$module/" : '';
 $controllerFile = CONTROLLER_DIR.$moduleDir.$controllerName.'.php';
 
-if(file_exists($controllerFile)){
-    include $controllerFile;
+$realControllerPath = realpath($controllerFile); //如果文件不存在,会返回false
+$basePath = realpath(CONTROLLER_DIR);
+
+// 校验：文件存在且必须在 CONTROLLER_DIR 目录内,
+if($realControllerPath && strpos($realControllerPath, $basePath) === 0){
+    include $realControllerPath;
 } else {
     header('HTTP/1.1 404 Not Found');
-    die('No file controller');
+    die('Controller not found');
 }
 
 if (!class_exists($controllerName)) {
@@ -131,9 +135,22 @@ if (!class_exists($controllerName)) {
 
 $classObj = new $controllerName();
 
+//检查方法名是否合法（禁止魔术方法和以 _ 开头的私有逻辑）
+if (strpos($action, '_') === 0 || in_array(strtolower($action), ['__construct', '__destruct', 'get_instance'])) {
+    header('HTTP/1.1 404 Not Found');
+    die("Forbidden method name");
+}
+
 if (!method_exists($classObj, $action)) {
     header('HTTP/1.1 404 Not Found');
     die("method not exists $controllerName $action");
+}
+
+//极致性能：确保它是 public 方法（防止调用 protected/private）
+$reflection = new ReflectionMethod($classObj, $action);
+if (!$reflection->isPublic()) {
+    header('HTTP/1.1 404 Not Found');
+    die("method is not public");
 }
 
 //执行方法

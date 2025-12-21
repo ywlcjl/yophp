@@ -15,7 +15,7 @@ class Yo_CacheFileDriver extends Yo_CacheDriver {
      * @return	void
      */
     public function __construct() {
-        $this->_cache_path = 'cache/';
+        $this->_cache_path = APP_PATH.'cache/';
     }
 
 

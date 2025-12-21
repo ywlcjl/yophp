@@ -52,6 +52,20 @@ function clean($str)
 }
 
 /**
+ * 入口方法过滤
+ * @param type $str
+ * @return type
+ */
+function cleanRoute($str)
+{
+    $str = trim($str);
+    // 【核心修改】只允许字母、数字和下划线，彻底杜绝 ../ 或非法字符注入
+    $str = preg_replace('/[^a-zA-Z0-9_]/', '', $str);
+
+    return $str;
+}
+
+/**
  * 获取链接参数
  * @param type $num
  * @return type
