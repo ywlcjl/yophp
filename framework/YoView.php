@@ -1,6 +1,6 @@
 <?php
 
-class Yo_View
+class YoView
 {
     //protected $variables = array();
     
@@ -8,9 +8,9 @@ class Yo_View
     
     private $_pageNav;
 
-    public function __construct() {
-        
-    }
+    protected function __construct() {}
+    private function __clone() {}
+    public function __wakeup() {}
     
     //单例模式
     public static function getInstance()
@@ -41,10 +41,11 @@ class Yo_View
      * @param $response
      * @return void
      */
-    public function json($response=array())
+    public function json($response=[])
     {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response);
+        exit;
     }
     
     public function getPageNav() {

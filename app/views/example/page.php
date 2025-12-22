@@ -36,7 +36,10 @@
                         <td class="time-text"><?php echo $value['create_time'] ?></td>
                         <td>
                             <a href="/example/edit/?id=<?php echo $value['id'] ?>">编辑</a>
-                            <a href="/example/delete/?id=<?php echo $value['id'] ?>" onclick="return confirm('Are you confirm delete?')">删除</a>
+                            <form action="/example/delete/" method="POST" onsubmit="return confirm('确定要删除吗？')">
+                                <input type="hidden" name="id" value="<?php echo $value['id'] ?>">
+                                <button type="submit">删除</button>
+                            </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>

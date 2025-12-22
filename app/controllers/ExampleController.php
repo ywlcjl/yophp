@@ -25,7 +25,7 @@ class ExampleController
 
         $exampleModel = ExampleModel::getInstance();
 
-        $data['examples'] = $exampleModel->getResult($paramInput, 10, 0, 'id DESC');
+        $data['examples'] = $exampleModel->getList($paramInput, 10, 0, 'id DESC');
         $data['status'] = $status;
         $data['statuss'] = $exampleModel->_statuss;
         $data['title'] = 'Yophp Example Index';
@@ -174,11 +174,15 @@ class ExampleController
 
     public function delete()
     {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            die('Illegal Request');
+        }
+
         $data = array();
         $message = '';
         $success = 0;
 
-        $id = intval($_GET['id']);
+        $id = intval($_POST['id']);
 
         $exampleModel = ExampleModel::getInstance();
 
@@ -187,6 +191,7 @@ class ExampleController
             $delete = $exampleModel->delete($param);
             if ($delete) {
                 $success = 1;
+                $message = "delete ID $id success";
             }
         } else {
             $message = 'Input id incorrect';
@@ -202,11 +207,11 @@ class ExampleController
 
         $sql = "SELECT id, name, desc_txt, `status`, create_time 
                     FROM example 
-                    WHERE status=1 
+                    WHERE status=? 
                     ORDER BY id ASC 
                     LIMIT 5";
 
-        $data['examples'] = $exampleModel->query($sql);
+        $data['examples'] = $exampleModel->query($sql, [1]);
         $data['statuss'] = $exampleModel->_statuss;
         $data['sql'] = $sql;
         $data['title'] = 'Yophp Example SQL';
@@ -218,7 +223,7 @@ class ExampleController
     {
         $data = array();
 
-        $cache = Yo_Cache::getInstance('apcu', 'file');
+        $cache = YoCache::getInstance('apcu', 'file');
 
         $exampleModel = ExampleModel::getInstance();
 
@@ -229,7 +234,7 @@ class ExampleController
 
         $examples = $cache->get($exampleCacheKey);
         if (!$examples) {
-            $examples = $exampleModel->getResult(array('status' => 1), 10, 0, "id DESC");
+            $examples = $exampleModel->getList(array('status' => 1), 10, 0, "id DESC");
 
             $cache->save($exampleCacheKey, $examples, 3600); //缓存时间单位是秒
             $message = 'create examples catch';
@@ -252,7 +257,7 @@ class ExampleController
 
     public function cacheRedis()
     {
-        $cache = Yo_Cache::getInstance('redis', 'file');
+        $cache = YoCache::getInstance('redis', 'file');
 
         $exampleModel = ExampleModel::getInstance();
 
@@ -261,7 +266,7 @@ class ExampleController
 
         $examples = $cache->get($exampleCacheKey);
         if (!$examples) {
-            $examples = $exampleModel->getResult(array('status' => 1), 5, 0, "id DESC");
+            $examples = $exampleModel->getList(array('status' => 1), 5, 0, "id DESC");
             $cache->save($exampleCacheKey, $examples, 3600);
             $message = 'create redis cache';
         } else {
@@ -316,12 +321,14 @@ class ExampleController
         $data = array();
         $exampleModel = ExampleModel::getInstance();
 
+        $bindings = [];
         $status = '';
         $whereSql = '';
 
         if (isset($_GET['status']) && $_GET['status'] !== '') {
             $status = clean($_GET['status']);
-            $whereSql = "AND `status`=$status";
+            $whereSql = "AND `status`=?";
+            $bindings[] = $status;
         }
 
         $suffix = "/?status=$status";
@@ -333,7 +340,7 @@ class ExampleController
         //echo $sql;
         $pageUrl = '/example/pagesql';
 
-        $examples = $exampleModel->getPageSql($sql, $pageUrl, 5, $suffix);
+        $examples = $exampleModel->getPageSql($sql, $bindings, $pageUrl, 5, $suffix);
         $data['examples'] = $examples;
         $data['sql'] = $sql;
         $data['status'] = $status;

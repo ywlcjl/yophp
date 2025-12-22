@@ -4,11 +4,11 @@
  * apc缓存处理
  */
 
-class Yo_CacheApcuDriver extends Yo_CacheDriver {
+class YoCacheApcuDriver extends YoCacheDriver {
 
     public function __construct() {
-        if (!$this->is_supported()) {
-            //print('Cache: Failed to initialize APC; extension not loaded/enabled?');
+        if (!$this->isSupported()) {
+            throw new Exception('Cache: Failed to initialize APC. extension not loaded/enabled?');
         }
     }
 
@@ -66,7 +66,7 @@ class Yo_CacheApcuDriver extends Yo_CacheDriver {
      * @param	string	user/filehits
      * @return	mixed	array on success, false on failure
      */
-    public function cache_info($type = NULL) {
+    public function cacheInfo($type = NULL) {
         return apcu_cache_info($type);
     }
 
@@ -77,8 +77,8 @@ class Yo_CacheApcuDriver extends Yo_CacheDriver {
      *
      * @return	bool
      */
-    public function is_supported() {
-        return (extension_loaded('apcu'));
+    public function isSupported() {
+        return extension_loaded('apcu') && ini_get('apc.enabled');
     }
 
 }

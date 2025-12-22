@@ -1,13 +1,13 @@
 <?php
 
-class Yo_CacheFileDriver extends Yo_CacheDriver {
+class YoCacheFileDriver extends YoCacheDriver {
 
     /**
      * Directory in which to save cache files
      *
      * @var string
      */
-    protected $_cache_path;
+    protected $_cachePath = APP_PATH.'cache/';
 
     /**
      * Initialize file-based cache
@@ -15,7 +15,9 @@ class Yo_CacheFileDriver extends Yo_CacheDriver {
      * @return	void
      */
     public function __construct() {
-        $this->_cache_path = APP_PATH.'cache/';
+        if (!$this->isSupported()) {
+            throw new Exception('Cache: Failed to initialize File.');
+        }
     }
 
 
@@ -41,14 +43,15 @@ class Yo_CacheFileDriver extends Yo_CacheDriver {
      * @return	bool	TRUE on success, FALSE on failure
      */
     public function save($id, $data, $ttl = 60, $raw = FALSE) {
-        $contents = array(
+        $path = $this->_getFilePath($id);
+        $contents = serialize([
             'time' => time(),
             'ttl' => $ttl,
             'data' => $data
-        );
+        ]);
 
-        if (file_put_contents($this->_cache_path . $id, serialize($contents))) {
-            chmod($this->_cache_path . $id, 0640);
+        if (file_put_contents($path, $contents, LOCK_EX)) {
+            chmod($path, 0640);
             return TRUE;
         }
 
@@ -63,7 +66,8 @@ class Yo_CacheFileDriver extends Yo_CacheDriver {
      * @return	bool	true on success/false on failure
      */
     public function delete($id) {
-        return is_file($this->_cache_path . $id) ? unlink($this->_cache_path . $id) : FALSE;
+        $path = $this->_getFilePath($id);
+        return is_file($path) ? unlink($path) : FALSE;
     }
 
 
@@ -73,7 +77,7 @@ class Yo_CacheFileDriver extends Yo_CacheDriver {
      * @return	bool	false on failure/true on success
      */
     public function clean() {
-        return delete_files($this->_cache_path, FALSE, TRUE);
+        return delete_files($this->_cachePath, FALSE, TRUE);
     }
 
     /**
@@ -84,8 +88,8 @@ class Yo_CacheFileDriver extends Yo_CacheDriver {
      * @param	string	user/filehits
      * @return	mixed	FALSE
      */
-    public function cache_info($type = NULL) {
-        return get_dir_file_info($this->_cache_path);
+    public function cacheInfo($type = NULL) {
+        return get_dir_file_info($this->_cachePath);
     }
 
     /**
@@ -95,8 +99,8 @@ class Yo_CacheFileDriver extends Yo_CacheDriver {
      *
      * @return	bool
      */
-    public function is_supported() {
-        return is_writable($this->_cache_path);
+    public function isSupported() {
+        return is_writable($this->_cachePath);
     }
 
     /**
@@ -108,18 +112,23 @@ class Yo_CacheFileDriver extends Yo_CacheDriver {
      * @return	mixed	Data array on success or FALSE on failure
      */
     protected function _get($id) {
-        if (!is_file($this->_cache_path . $id)) {
+        $path = $this->_getFilePath($id);
+        if (!is_file($path)) {
             return FALSE;
         }
 
-        $data = unserialize(file_get_contents($this->_cache_path . $id));
+        $data = unserialize(file_get_contents($path));
 
         if ($data['ttl'] > 0 && time() > $data['time'] + $data['ttl']) {
-            file_exists($this->_cache_path . $id) && unlink($this->_cache_path . $id);
+            file_exists($path) && unlink($path);
             return FALSE;
         }
 
         return $data;
+    }
+    protected function _getFilePath($id) {
+        // 使用 MD5 确保文件名安全且唯一
+        return $this->_cachePath . 'cache_' .md5($id);
     }
 
 }

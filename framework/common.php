@@ -13,15 +13,15 @@ function loadClass($className)
     //UserModel.php 截取Model
     $modelKey = substr($className, -5, 5);
 
-    //Yo_Model.php 截取Yo_
-    $frameworklKey = substr($className, 0, 3);
+    //YoModel.php 截取Yo
+    $frameworklKey = substr($className, 0, 2);
 
     if ($modelKey == 'Model') {
         $file = APP_DIR . 'models/' . $className . '.php';
         if (file_exists($file)) {
             include_once $file;
         }
-    } elseif ($frameworklKey == 'Yo_') {
+    } elseif ($frameworklKey == 'Yo') {
         //加载框架类
         $file = FRAMEWORK_DIR . $className . '.php';
         if (file_exists($file)) {
@@ -99,11 +99,11 @@ function uri($num = '')
 
 /**
  * 获取视图对象
- * @return Yo_View
+ * @return YoView
  */
 function view()
 {
-    return Yo_View::getInstance();
+    return YoView::getInstance();
 }
 
 /**

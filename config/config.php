@@ -8,6 +8,7 @@ define('DB_HOST', '127.0.0.1');
 define('DB_USER', 'root');
 define('DB_PASSWORD', '8888');
 define('DB_NAME', 'yophp');
+define('DB_PCONNECT', true);  //MYSQL PCONNECT
 
 //hosting * example http://yophp.localhost
 define('APP_DOMAIN', 'http://yophp.localhost');

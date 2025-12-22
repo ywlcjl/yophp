@@ -1,6 +1,6 @@
 <?php
 
-class Yo_CacheRedisDriver extends Yo_CacheDriver {
+class YoCacheRedisDriver extends YoCacheDriver {
     
     protected $_host = '127.0.0.1';
     protected $_port = 6379;
@@ -12,15 +12,6 @@ class Yo_CacheRedisDriver extends Yo_CacheDriver {
      * @var	Redis
      */
     protected $_redis;
-
-    /**
-     * An internal cache for storing keys of serialized values.
-     *
-     * @var	array
-     */
-    protected $_serialized = array();
-
-    protected $_sIsMemberName = '_yo_redis_serialized';
 
 
     /**
@@ -35,20 +26,19 @@ class Yo_CacheRedisDriver extends Yo_CacheDriver {
      * @see		Redis::connect()
      */
     public function __construct() {
-        if (!$this->is_supported()) {
-//            print('Cache: Failed to create Redis object; extension not loaded?');
-            return;
+        if (!$this->isSupported()) {
+            throw new Exception('Cache: Failed to create Redis object. extension not loaded?');
         }
 
         $this->_redis = new Redis();
 
         try {
-
             $success = $this->_redis->connect($this->_host, $this->_port, $this->_timeout);
 
             if (!$success) {
-//                print('Cache: Redis connection failed. Check your configuration.');
+                throw new Exception('Redis connection failed.');
             }
+            $this->_redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
 
 //            if (isset($config['password']) && !$this->_redis->auth($config['password'])) {
 //                print('Cache: Redis authentication failed.');
@@ -67,10 +57,6 @@ class Yo_CacheRedisDriver extends Yo_CacheDriver {
     public function get($key) {
         $value = $this->_redis->get($key);
 
-        if ($value !== FALSE && $this->_redis->sIsMember($this->_sIsMemberName, $key)) {
-            return unserialize($value);
-        }
-
         return $value;
     }
 
@@ -84,17 +70,6 @@ class Yo_CacheRedisDriver extends Yo_CacheDriver {
      * @return	bool	TRUE on success, FALSE on failure
      */
     public function save($id, $data, $ttl = 60, $raw = FALSE) {
-        if (is_array($data) OR is_object($data)) {
-            if (!$this->_redis->sIsMember($this->_sIsMemberName, $id) && !$this->_redis->sAdd($this->_sIsMemberName, $id)) {
-                return FALSE;
-            }
-
-            isset($this->_serialized[$id]) OR $this->_serialized[$id] = TRUE;
-            $data = serialize($data);
-        } else {
-            $this->_redis->sRemove($this->_sIsMemberName, $id);
-        }
-
         return $this->_redis->set($id, $data, $ttl);
     }
 
@@ -105,13 +80,7 @@ class Yo_CacheRedisDriver extends Yo_CacheDriver {
      * @return	bool
      */
     public function delete($key) {
-        if ($this->_redis->delete($key) !== 1) {
-            return FALSE;
-        }
-
-        $this->_redis->sRemove($this->_sIsMemberName, $key);
-
-        return TRUE;
+        return (bool)$this->_redis->del($key);
     }
 
     /**
@@ -134,32 +103,18 @@ class Yo_CacheRedisDriver extends Yo_CacheDriver {
      * @return	array
      * @see		Redis::info()
      */
-    public function cache_info($type = NULL) {
+    public function cacheInfo($type = NULL) {
         return $this->_redis->info();
     }
-
 
     /**
      * Check if Redis driver is supported
      *
      * @return	bool
      */
-    public function is_supported() {
+    public function isSupported() {
         return extension_loaded('redis');
     }
 
-
-    /**
-     * Class destructor
-     *
-     * Closes the connection to Redis if present.
-     *
-     * @return	void
-     */
-    public function __destruct() {
-        if ($this->_redis) {
-            $this->_redis->close();
-        }
-    }
 
 }

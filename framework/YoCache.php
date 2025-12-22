@@ -4,7 +4,7 @@
  * 缓存基类
  */
 
-class Yo_Cache {
+class YoCache {
 
     //单例实例化
     private static $_instance;
@@ -22,30 +22,45 @@ class Yo_Cache {
 
     //当前使用的驱动
     public $_currentDriver;
-    
+
     public function __construct($mainDriver, $backupDriver) {
         if (!$this->_cache) {
 
             $this->_mainDriver = $mainDriver;
             $this->_backupDriver = $backupDriver;
-            
-            $mainDriverClassName = 'Yo_Cache' . ucfirst($mainDriver) . 'Driver';
-            $cache = new $mainDriverClassName();
-            if (is_object($cache) && $cache->is_supported()) {
-                $this->_cache = $cache;
+
+            try {
+                $this->_cache = $this->_loadDriver($mainDriver);
                 $this->_currentDriver = $mainDriver;
-            } else {
-                $backupDriverClassName = 'Yo_Cache' . ucfirst($backupDriver) . 'Driver';
-                $cache = new $backupDriverClassName();
-                if (is_object($cache) && $cache->is_supported()) {
-                    $this->_cache = $cache;
+            } catch (Exception $e) {
+                try {
+                    $this->_cache = $this->_loadDriver($backupDriver);
                     $this->_currentDriver = $backupDriver;
-                } else {
-                    print('no cache driver supported.');
+                } catch (Exception $e2) {
+                    print("YoCache Backup Driver ({$backupDriver}) also failed!");
                 }
             }
         }
     }
+
+    private function _loadDriver($driver) {
+        $className = 'YoCache' . ucfirst($driver) . 'Driver';
+
+        if (!class_exists($className)) {
+            throw new Exception("Driver class {$className} not found.");
+        }
+
+        $cache = new $className();
+
+//        if (!$cache->isSupported()) {
+//            throw new Exception("Driver {$className} is not supported by environment.");
+//        }
+
+        return $cache;
+    }
+
+    private function __clone() {}     //防止克隆
+    public function __wakeup() {}    //防止反序列化
 
     public static function getInstance($mainDriver, $backupDriver) {
         if (!(self::$_instance instanceof self)) {
@@ -83,11 +98,8 @@ class Yo_Cache {
         return $this->_cache->clean();
     }
 
-    public function cache_info($type = 'user') {
+    public function cacheInfo($type = 'user') {
         return $this->_cache->cache_info($type);
     }
 
-
-
-    
 }

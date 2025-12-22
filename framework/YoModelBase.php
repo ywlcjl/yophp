@@ -2,20 +2,23 @@
 /*
  * 模型基类
  */
-class Yo_ModelBase
+class YoModelBase
 {
     //存储所有子类单例的通用静态变量
     protected static $_instances = [];
 
-    protected $tableName;
+    protected $_tableName;
     
-    protected $db;
-    
-    public function __construct()
+    protected $_db;
+
+    protected function __construct()
     {
         //获取数据库连接
-        $this->db = Yo_PdoMysql::getInstance()->getDb();
+        $this->_db = YoPdoMysql::getInstance()->getDb();
     }
+
+    private function __clone() {}
+    public function __wakeup() {}
 
     /**
      * 单例模式: 使用后期静态绑定 (Late Static Binding) 实现子类独立单例
@@ -30,85 +33,84 @@ class Yo_ModelBase
             //假如没有找到就单例模式初始化
             self::$_instances[$className] = new static();
 
-            // 确保子类定义了 protected static $name
-            if (property_exists($className, 'name') && static::$name) {
-                self::$_instances[$className]->tableName = static::$name;
+            // 确保子类定义了 protected static $_name
+            if (property_exists($className, '_name') && static::$_name) {
+                self::$_instances[$className]->_tableName = static::$_name;
             }
         }
 
         return self::$_instances[$className];
     }
 
-    public function getResult($param=array(), $limit='', $start=0, $orderBy='id DESC')
+    public function getList($param=[], $limit='', $start=0, $orderBy='id DESC', $fields = '*')
     {
-        $result = array();
-        
-        $whereStr = $this->whereStr($param);
-                
-        $sql = "SELECT * FROM ". $this->tableName." $whereStr 
-                ORDER BY $orderBy ";
+        $result = [];
+        list($whereSql, $bindings) = $this->buildWhere($param);
 
-        if($limit !== '') {
-            $sql .= "LIMIT $start, $limit ";
+        $sql = "SELECT $fields FROM `{$this->_tableName}` $whereSql ORDER BY $orderBy";
+
+        if ($limit !== '') {
+            $sql .= " LIMIT " . $start . ", " . $limit;
         }
 
-        $sth = $this->db->prepare($sql);
-        $sth->execute();
-        
-        if ($sth) {
-            $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+        $sth = $this->_db->prepare($sql);
+        $sth->execute($bindings);
+        $fetch = $sth->fetchAll();
+
+        if ($fetch) {
+            $result = $fetch;
         }
 
         return $result;
     }
     
-    public function getRow($param=array())
+    public function getRow($param=[], $fields = '*')
     {
-        $row = array();
-        $whereStr = $this->whereStr($param);
-        
-        $sql = "SELECT * FROM ". $this->tableName." $whereStr";
+        $row = [];
+        list($whereSql, $bindings) = $this->buildWhere($param);
+        $sql = "SELECT $fields FROM `{$this->_tableName}` $whereSql LIMIT 1";
 
-        $sth = $this->db->prepare($sql);
-        $sth->execute();
-        
-        if($sth) {
-            $row = $sth->fetch(PDO::FETCH_ASSOC);
+        $sth = $this->_db->prepare($sql);
+        $sth->execute($bindings);
+        $fetch = $sth->fetch();
+
+        if ($fetch) {
+            $row = $fetch;
         }
-        
+
         return $row;
     }
 
     public function count($param=array())
     {
         $num = 0;
-        $whereStr = $this->whereStr($param);
-                
-        $sql = "SELECT COUNT(*) as num FROM ". $this->tableName." $whereStr";
-        
-        $sth = $this->db->prepare($sql);
-        $sth->execute();
-        if($sth) {
-            $row = $sth->fetch(PDO::FETCH_ASSOC);
+        list($whereSql, $bindings) = $this->buildWhere($param);
+        $sql = "SELECT COUNT(*) as num FROM `{$this->_tableName}` $whereSql";
+
+        $sth = $this->_db->prepare($sql);
+        $sth->execute($bindings);
+        $row = $sth->fetch();
+        if ($row) {
             $num = $row['num'];
         }
         return $num;
     }
     
-    public function query($sql, $fetchRow=false)
+    public function query($sql, $bindings=[], $fetchRow=false)
     {
-        $result = array();
-        $sth = $this->db->prepare($sql);
-        $sth->execute();
-        
-        //sql错误提示
-        $this->errorInfo($sth);
-        
-        if ($sth) {
-            if($fetchRow) {
-                $result = $sth->fetch(PDO::FETCH_ASSOC);
-            } else {
-                $result = $sth->fetchAll(PDO::FETCH_ASSOC);
+        $sth = $this->_db->prepare($sql);
+        $sth->execute($bindings);
+
+        $result = [];
+        if($fetchRow) {
+            $fetch = $sth->fetch();
+            if ($fetch) {
+                $result = $fetch;
+            }
+        } else {
+            $fetch = $sth->fetchAll();
+            if ($fetch) {
+                $result = $fetch;
             }
         }
 
@@ -117,61 +119,49 @@ class Yo_ModelBase
     
     public function insert($param)
     {
-        $fieldStr = '';
-        $valueStr = '';
+        $insertId = 0;
+        $fields = array_keys($param);
+        $placeholders = implode(',', array_fill(0, count($fields), '?'));
+        $sql = "INSERT INTO `{$this->_tableName}` (`" . implode("`,`", $fields) . "`) VALUES ($placeholders)";
 
-        if ($param != NULL) {
-            $i = 0;
-            foreach ($param as $key => $value) {
-                if($i > 0) {
-                    $fieldStr .= ',';
-                    $valueStr .= ',';
-                }
-                $fieldStr .= "`$key`";
-                $valueStr .= "'$value'";
-                $i++;
-            }
+        $sth = $this->_db->prepare($sql);
+        $sth->execute(array_values($param));
+
+        $lastInsertId = $this->_db->lastInsertId();
+
+        if ($lastInsertId) {
+            $insertId = $lastInsertId;
         }
 
-        $sql = "INSERT INTO " .$this->tableName. "($fieldStr) VALUES($valueStr)";
-        $insert = $this->db->exec($sql);
-        return $insert;
+        return $insertId;
     }
 
     public function update($setParam, $whereParam)
     {
-        $setStr = '';
-        
-        if ($setParam != NULL) {
-            $i = 0;
-            foreach ($setParam as $key => $value) {
-                if($i > 0) {
-                    $setStr .= ',';
-                }
-                
-                $setStr .= "`$key`='$value'";
-                $i++;
-            }
+        $setFields = [];
+        $setValues = [];
+        foreach ($setParam as $key => $value) {
+            $setFields[] = "`$key` = ?";
+            $setValues[] = $value;
         }
-        $whereStr = $this->whereStr($whereParam);
-        
-        $sql = "UPDATE " . $this->tableName. " SET $setStr $whereStr";
+        $setStr = implode(', ', $setFields);
 
-        $update = $this->db->exec($sql);
-        return $update;
+        list($whereSql, $whereValues) = $this->buildWhere($whereParam);
+        $sql = "UPDATE `{$this->_tableName}` SET $setStr $whereSql";
+
+        $sth = $this->_db->prepare($sql);
+        return $sth->execute(array_merge($setValues, $whereValues));
     }
 
     public function delete($param)
     {
-        $whereStr = $this->whereStr($param);
-        
-        $sql = "DELETE FROM " . $this->tableName." $whereStr";
-        echo $sql;
-        $delete = $this->db->exec($sql);
-        return $delete;
+        list($whereSql, $bindings) = $this->buildWhere($param);
+        $sql = "DELETE FROM `{$this->_tableName}` $whereSql";
+        $sth = $this->_db->prepare($sql);
+        return $sth->execute($bindings);
     }
     
-    public function getPage($param = array(), $orderBy = 'id DESC', $url='', $pagePer = 20, $suffix = '', $pageStyle='pageDefault') {
+    public function getPage($param=[], $orderBy = 'id DESC', $url='', $pagePer = 20, $suffix = '', $fields = '*', $pageStyle='pageDefault') {
         $urlArray = explode('/', $url);
         $pageUri = 1;
         foreach($urlArray as $key=>$value) {
@@ -187,7 +177,7 @@ class Yo_ModelBase
 
         $total = $this->count($param);
         //获取数据
-        $result = $this->getResult($param, $pagePer, $startRow, $orderBy);
+        $result = $this->getList($param, $pagePer, $startRow, $orderBy, $fields);
 
         //自定义分页处理方法, 默认为pageDefault方法, 可以根据实际情况添加不同的样式方法
         $this->$pageStyle($url, $pageNum, $pagePer, $total, $suffix);  //创建分页链接
@@ -195,7 +185,7 @@ class Yo_ModelBase
         return $result;
     }
     
-    public function getPageSql($sql, $url, $pagePer=20, $suffix='', $pageStyle='pageDefault') {
+    public function getPageSql($sql, $bindings = [], $url='', $pagePer=20, $suffix='', $pageStyle='pageDefault') {
         $result = array();
 
         $urlArray = explode('/', $url);
@@ -225,13 +215,13 @@ class Yo_ModelBase
         }
 
         //返回数组
-        $row = $this->query($queryCount, true);
+        $row = $this->query($queryCount, $bindings,true);
         $total = isset($row['total']) ? $row['total'] : 0;
 
         //获取数据
         if ($total > 0) {
             $sql .= " LIMIT $startRow, $pagePer";
-            $result = $this->query($sql);
+            $result = $this->query($sql, $bindings);
         }
         
         //自定义分页处理方法, 默认为pageDefault方法, 可以根据实际情况添加不同的样式方法
@@ -313,7 +303,7 @@ class Yo_ModelBase
 
     public function insertId()
     {
-        return $this->db->lastInsertId();
+        return $this->_db->lastInsertId();
     }
     
     /*
@@ -333,52 +323,34 @@ class Yo_ModelBase
     /*
      * where条件语句拼接
      */
-    private function whereStr($param) {
-        $whereStr = '';
-        if($param && is_array($param)) {
-            $whereStr .= ' WHERE ';
-            
-            $i = 0;
-            foreach($param as $key=>$value) {
-                if($i > 0) {
-                    $whereStr .= ' AND ';
-                }
-                
-                //是否需要单引号
-                $sy = is_numeric($value) ? '' : "'";
-                
-                $keyArray = explode(' ', $key);
-                
-                if(count($keyArray) > 1) {
-                    //['name like']='test'
-                    $keyName = $keyArray[0];
-                    $keySymbol = $keyArray[1];
-                    if($keySymbol == 'like') {
-                        $whereStr .= "`$keyName` LIKE '%$value%'";
-                    } elseif(in_array($keySymbol, array('>', '>=', '<', '<=', '!='))) {
-                        $whereStr .= "`$keyName` $keySymbol $sy{$value}$sy";
-                    } elseif($keySymbol == 'in') {
-                        if($value && is_array($value)) {
-                            $whereStr .= "$keyName IN (";
-                            foreach ($value as $k=>$v) {
-                                if($k > 0) {
-                                    $whereStr .= ",";
-                                }
-                                $sys = is_numeric($v) ? '' : "'";
-                                
-                                $whereStr .= "$sys{$v}$sys";
-                            }
-                            $whereStr .= ")";
-                        }
-                    }
-                } else {
-                    
-                    $whereStr .= "`$key`= $sy{$value}$sy";
-                }
-                $i++;
+    protected function buildWhere($param)
+    {
+        if (empty($param)) return ['', []];
+
+        $conditions = [];
+        $bindings = [];
+
+        foreach ($param as $key => $value) {
+            $keyArray = explode(' ', trim($key));
+            $field = $keyArray[0];
+            $op = isset($keyArray[1]) ? strtolower($keyArray[1]) : '=';
+
+            if ($op === 'like') {
+                $conditions[] = "`$field` LIKE ?";
+                $bindings[] = "%$value%";
+            } elseif ($op === 'in' && is_array($value)) {
+                $placeholders = implode(',', array_fill(0, count($value), '?'));
+                $conditions[] = "`$field` IN ($placeholders)";
+                $bindings = array_merge($bindings, array_values($value));
+            } elseif (in_array($op, ['>', '>=', '<', '<=', '!='])) {
+                $conditions[] = "`$field` $op ?";
+                $bindings[] = $value;
+            } else {
+                $conditions[] = "`$field` = ?";
+                $bindings[] = $value;
             }
         }
-        
-        return $whereStr;
+
+        return [' WHERE ' . implode(' AND ', $conditions), $bindings];
     }
 }
