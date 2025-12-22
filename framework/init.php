@@ -45,26 +45,79 @@ $module = '';
 //获取链接uri数组
 $uris = uri();
 
-//路由映射
+//路由映射, 设置虚拟主机域名,以及支持.htaccess rewrite的访问路径
 if(isset($uris[0]) && $uris[0] != 'index.php') {
-    //设置虚拟主机域名,以及支持.htaccess rewrite的访问路径
-    if (count($uris) > 0 && array_key_exists($uris[0], $routes)) {
-        //路由设定映射值
-        $routeValue = $routes[$uris[0]];
-        $routeUriT = explode('/', $routeValue);
-        $routeUris = array();
+    //假设当前 $uris 是 array('e', 'page', '123')
+    $matched = false;
+    $requestPath = implode('/', $uris); // 组合成完整的请求路径 e/1
+    $routeParams = []; // 用于存储提取到的参数，如 ['id' => 1]
 
-        if ($routeUriT) {
-            foreach ($routeUriT as $key => $value) {
-                if ($value) {
-                    $routeUris[] = $value;
-                }
-            }
-        }
-        //路由映射存在则uris重新赋值
-        $uris = $routeUris;
+    // 静态哈希匹配 (最高优先级 + 极致性能) 只有不含 { 的规则才进入静态匹配，利用 array_key_exists 的 O(1) 性能
+    if (isset($routes[$requestPath]) && strpos($requestPath, '{') === false) {
+        $routeValue = $routes[$requestPath];
+        $uris = array_values(array_filter(explode('/', $routeValue)));
+        $matched = true;
     }
 
+    if(!$matched && $routes) {
+        foreach ($routes as $rule => $target) {
+            if (strpos($rule, '{') === false) continue; // 跳过静态路由
+            // 关键正则：匹配 {名称:类型}
+            $pattern = '#^' . preg_replace_callback('/\{([a-zA-Z0-9_]+):([a-z]+)\}/', function($matches) {
+                    $name = $matches[1]; // 变量名，如 id, name
+                    $type = $matches[2]; // 类型，如 num, str, any
+
+                    // 根据类型映射正则
+                    switch ($type) {
+                        case 'num':
+                            $reg = '\d+';
+                            break;
+                        case 'str':
+                            $reg = '[a-zA-Z]+';
+                            break;
+                        case 'any':
+                        default:
+                            $reg = '[^/]+';
+                            break;
+                    }
+
+                    return "(?P<$name>$reg)";
+                }, $rule) . '$#';
+
+            if (preg_match($pattern, $requestPath, $matches)) {
+                $routeValue = $target;
+                foreach ($matches as $key => $value) {
+                    if (is_string($key)) $routeParams[$key] = $value;
+                }
+                $uris = array_values(array_filter(explode('/', $routeValue)));
+                $matched = true;
+                break;
+            }
+        }
+    }
+
+    //从最长的可能路径开始尝试（比如先试 e/page，再试 e）
+    if (!$matched) {
+        for ($i = count($uris); $i > 0; $i--) {
+            // 截取前 $i 个片段并用 / 连接
+            $searchKey = implode('/', array_slice($uris, 0, $i));
+
+            if (array_key_exists($searchKey, $routes)) {
+                // 找到了映射值
+                $routeValue = $routes[$searchKey];
+                // 重新处理 routeValue，去除多余斜杠并转为数组
+                $routeUris = array_values(array_filter(explode('/', $routeValue)));
+                // 获取路由匹配掉之后剩余的参数（比如 id 等）
+                $remainUris = array_slice($uris, $i);
+                // 重新合并：映射后的路径 + 剩余的参数
+                $uris = array_merge($routeUris, $remainUris);
+                $matched = true;
+                break; // 匹配到最长的就跳出
+            }
+        }
+    }
+
+    //找到映射后的正式controller和action
     $uriCount = 0;
     if ($uris) {
         foreach ($uris as $key => $value) {
@@ -148,10 +201,37 @@ if (!method_exists($classObj, $action)) {
 
 //极致性能：确保它是 public 方法（防止调用 protected/private）
 $reflection = new ReflectionMethod($classObj, $action);
+
 if (!$reflection->isPublic()) {
     header('HTTP/1.1 404 Not Found');
     die("method is not public");
 }
 
+$methodParams = $reflection->getParameters();
+$callArgs = [];
+
+// 计算传统路径中，参数应该从 $uris 的第几个索引开始
+// 如果有 module，参数通常从 $uris[3] 开始；没有 module，则从 $uris[2] 开始
+$paramStartIndex = $module ? 3 : 2;
+
+foreach ($methodParams as $key=>$param) {
+    $name = $param->getName();
+    if (array_key_exists($name, $routeParams)) {
+        // 如果方法的参数名（如 $id）在路由匹配结果中存在，则注入
+        $callArgs[] = $routeParams[$name];
+    } elseif (isset($uris[$paramStartIndex + $key])) {
+        // 备选：从传统的 URI 片段中取 (例如 /example/detail/5 中的 5)
+        $callArgs[] = $uris[$paramStartIndex + $key];
+    } elseif ($param->isDefaultValueAvailable()) {
+        // 否则使用方法定义的默认值
+        $callArgs[] = $param->getDefaultValue();
+    } else {
+        // 既没有匹配到，也没有默认值，给 null
+        $callArgs[] = null;
+    }
+}
+
+// 执行方法
+$reflection->invokeArgs($classObj, $callArgs);
 //执行方法
-$classObj->$action();
+//$classObj->$action();

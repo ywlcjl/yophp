@@ -73,7 +73,7 @@ function cleanRoute($str)
 function uri($num = '')
 {
     $uris = array();
-    $uriStr = $_SERVER['REQUEST_URI'];
+    $uriStr = trim($_SERVER['REQUEST_URI']);
 
     //带参数的链接 /home/index/?page=1 去掉?后面的
     $uriStrT = stristr($_SERVER['REQUEST_URI'], '?', true);

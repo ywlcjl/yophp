@@ -1,6 +1,7 @@
 <?php
 /*
  * 模型基类
+ * YoModelBase 使用Base命名是为了自动加载区分普通的Model类, 方便加载目录
  */
 class YoModelBase
 {

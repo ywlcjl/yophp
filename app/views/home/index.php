@@ -24,7 +24,8 @@
             <a href="/example/cacheRedis" target="_blank">test redis cache</a>
             <a href="/example/page">test page</a>
             <a href="/example/pagesql">test pagesql</a>
-            <a href="/e/2">test router</a>
+            <a href="/e/2">test route</a>
+            <a href="/e/2/jacky">test routeWithName</a>
         </div>
 
         <div class="backend-area">

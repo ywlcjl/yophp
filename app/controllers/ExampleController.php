@@ -39,19 +39,20 @@ class ExampleController
         view()->json($response);
     }
 
-    public function detail()
+    /**
+     * @param $id 该命名必须和route里面的{name}一致
+     * @return void
+     */
+    public function detail($id=0)
     {
         $data = array();
 
-        $detailId = uri(2);
-        //先查路由映射
-        if (!is_numeric($detailId)) {
-            //查不到再查普通入口
-            $detailId = uri(3);
-            if (!is_numeric($detailId)) {
-                $detailId = 0;
-            }
+        $id = intval($id);
+        if (!$id) {
+            exit('not found id');
         }
+        $detailId = $id;
+
 
         $exampleModel = ExampleModel::getInstance();
         $detail = array();
@@ -67,7 +68,37 @@ class ExampleController
         $data['statuss'] = $exampleModel->_statuss;
         $data['title'] = 'Yophp Example Detail';
         view()->render('example/detail', $data);
+    }
 
+    /**
+     * @param $id   该命名必须和route里面的{id}一致
+     * @param $name 该命名必须和route里面的{name}一致
+     * @return void
+     */
+    public function detailWithName($id=0, $name='')
+    {
+        $data = array();
+
+        if (!$id) {
+            exit('not found id');
+        }
+        $detailId = $id;
+
+
+        $exampleModel = ExampleModel::getInstance();
+        $detail = array();
+        if ($detailId > 0) {
+            $row = $exampleModel->getRow(array('id' => $detailId));
+            if ($row) {
+                $detail = $row;
+            }
+        }
+
+        $data['detail'] = $detail;
+        $data['detailId'] = $detailId;
+        $data['statuss'] = $exampleModel->_statuss;
+        $data['title'] = 'Yophp Example Detail with Name: '.$name;
+        view()->render('example/detail', $data);
     }
 
     public function edit()
