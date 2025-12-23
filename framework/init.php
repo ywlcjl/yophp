@@ -150,17 +150,17 @@ if(isset($uris[0]) && $uris[0] != 'index.php') {
     //没有路径参数,则查找输入参数 http://yophp.localhost/index.php?m=&c=&a=
     //手动获得module
     if (isset($_REQUEST['m'])) {
-        $module = cleanRoute($_REQUEST['m']);
+        $module = sanitizePure($_REQUEST['m']);
     }
 
     //手动获得controller
     if (isset($_REQUEST['c'])) {
-        $controller = cleanRoute($_REQUEST['c']);
+        $controller = sanitizePure($_REQUEST['c']);
     }
 
     //手动获得action
     if (isset($_REQUEST['a'])) {
-        $action = cleanRoute($_REQUEST['a']);
+        $action = sanitizePure($_REQUEST['a']);
     }
 }
 

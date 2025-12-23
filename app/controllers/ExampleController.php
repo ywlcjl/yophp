@@ -2,22 +2,20 @@
 
 //namespace Yophp\Application\Controllers;
 
-class ExampleController
+class ExampleController extends YoControllerBase
 {
     public function __construct()
     {
-        //加入自定义helper函数
-        include_once HELPER_DIR.'MyHelper.php';
+        //加载自定义helper函数文件
+        $this->loadHelper('MyHelper');
     }
 
     public function index()
     {
         $data = array();
 
-        $status = 1;
-        if (isset($_GET['status']) && $_GET['status'] !== '') {
-            $status = clean($_GET['status']);
-        }
+        //controller的get过滤
+        $status = $this->get('status', 1);
 
         $paramInput = array(
             'status' => $status,
@@ -79,6 +77,7 @@ class ExampleController
     {
         $data = array();
 
+        $id = intval($id);
         if (!$id) {
             exit('not found id');
         }
@@ -106,7 +105,7 @@ class ExampleController
         $data = array();
         $exampleModel = ExampleModel::getInstance();
 
-        $id = isset($_GET['id']) ? intval($_GET['id']) : '';
+        $id = $this->get('id', '');
         $detail = array();
 
         if ($id > 0) {
@@ -139,25 +138,29 @@ class ExampleController
         if (isset($_POST) && !empty($_POST)) {
             $exampleModel = ExampleModel::getInstance();
 
-            $id = isset($_POST['id']) ? intval($_POST['id']) : '';
-            $name = isset($_POST['name']) ? clean($_POST['name']) : '';
-            $status = isset($_POST['status']) ? intval($_POST['status']) : '';
-            $descTxt = isset($_POST['desc_txt']) ? clean($_POST['desc_txt']) : '';
+            //验证器
+            $validator = new YoValidator();
+            $validator->rule('name', '名称')->required()->alphaDash();
+            $validator->rule('status', '状态')->required()->numeric();
+            $validator->rule('desc_txt', '描述')->maxLength(20);
 
-            $inputParam = array();
-            if(!$name) {
-                $message = 'the name is empty';
-            }elseif(!$descTxt) {
-                $message = 'the descTxt is empty';
-            }elseif($status ==='') {
-                $message = 'the status is empty';
+            $id = intval($this->post('id'));
+            $name = $this->post('name', '', false);
+            $status = $this->post('status');
+            $descTxt = $this->post('desc_txt');
+
+
+            if(!$validator->run()) {
+                //规则验证失败
+                $message = $validator->getErrorInfo();
             } else {
+                $inputParam = array();
                 $inputParam['name'] = $name;
                 $inputParam['desc_txt'] = $descTxt;
                 $inputParam['status'] = $status;
 
                 $affected = '';
-                if($id >0) {
+                if($id > 0) {
                     //编辑现有条目
                     $whereParam['id'] = $id;
                     $inputParam['update_time'] = date('Y-m-d H:i:s');
@@ -180,7 +183,7 @@ class ExampleController
             }
 
             if($success) {
-                go_url("/example/page/?success=$success&message=$message");
+                goUrl("/example/page/?success=$success&message=$message");
             } else {
                 $detail= array(
                     'id' => $id,
@@ -228,7 +231,7 @@ class ExampleController
             $message = 'Input id incorrect';
         }
 
-        go_url("/example/page/?success=$success&message=$message");
+        goUrl("/example/page/?success=$success&message=$message");
     }
 
     public function sql()
@@ -328,15 +331,16 @@ class ExampleController
 
         $status = '';
         if (isset($_GET['status']) && $_GET['status'] !== '') {
-            $status = clean($_GET['status']);
+            $status = $this->get('status');
             $paramInput['status'] = $status;
         }
 
         $pageUrl = '/example/page';
         $suffix = "/?status=$status";
 
-        $examples = $exampleModel->getPage($paramInput, 'id DESC', $pageUrl, 10, $suffix);
-        $data['examples'] = $examples;
+        $result = $exampleModel->getPage($paramInput, 'id DESC', $pageUrl, 10, $suffix);
+
+        $data['examples'] = $result['list'];
         $data['status'] = $status;
         $data['statuss'] = $exampleModel->_statuss;
         $data['title'] = 'Yophp Example Page';
@@ -357,7 +361,7 @@ class ExampleController
         $whereSql = '';
 
         if (isset($_GET['status']) && $_GET['status'] !== '') {
-            $status = clean($_GET['status']);
+            $status = sanitize($_GET['status']);
             $whereSql = "AND `status`=?";
             $bindings[] = $status;
         }
@@ -371,8 +375,8 @@ class ExampleController
         //echo $sql;
         $pageUrl = '/example/pagesql';
 
-        $examples = $exampleModel->getPageSql($sql, $bindings, $pageUrl, 5, $suffix);
-        $data['examples'] = $examples;
+        $result = $exampleModel->getPageSql($sql, $bindings, $pageUrl, 5, $suffix, 'pageDefaultCn');
+        $data['examples'] = $result['list'];
         $data['sql'] = $sql;
         $data['status'] = $status;
         $data['statuss'] = $exampleModel->_statuss;

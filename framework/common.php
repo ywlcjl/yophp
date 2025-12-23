@@ -37,32 +37,37 @@ function loadClass($className)
 }
 
 /**
- * 基础过滤
+ * 过滤函数
  * @param type $str
  * @return type
  */
-function clean($str)
+function sanitize($str)
 {
     $str = trim($str);
-
     $str = htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
-    //添加转义
-    $str = addslashes($str);
+
     return $str;
 }
 
 /**
- * 入口方法过滤
+ * 过滤非字母, 非数字, 非_,的字符串
  * @param type $str
  * @return type
  */
-function cleanRoute($str)
+function sanitizePure($str)
 {
     $str = trim($str);
-    // 【核心修改】只允许字母、数字和下划线，彻底杜绝 ../ 或非法字符注入
     $str = preg_replace('/[^a-zA-Z0-9_]/', '', $str);
 
     return $str;
+}
+
+function sanitizeArray($array=array())
+{
+    if (is_array($array)) {
+        return array_map('sanitize', $array);
+    }
+    return $array;
 }
 
 /**
@@ -110,8 +115,52 @@ function view()
  * 跳转链接
  * @param type $url
  */
-function go_url($url)
+function goUrl($url)
 {
     header("Location:$url");
     exit;
+}
+
+
+/**
+ * 获取缩略图文件名
+ * @param type $path
+ * @param type $size
+ * @return stringWithSizeName
+ */
+function getImgPath($path, $size = 'thumb')
+{
+    $newPath = $path;
+    if ($size) {
+        $newPath = substr($path, 0, -(strlen($path) - strrpos($path, '.'))) . '_' . $size . substr($path, strrpos($path, '.'));
+    }
+    return $newPath;
+}
+
+/**
+ * 返回文件类型名
+ * @param $src
+ * @return false|string
+ */
+function getFileType($src)
+{
+    return substr($src, strrpos($src, '.') + 1, strlen($src));
+}
+
+/**
+ * 放入数组, 重组获得获取id对应的value
+ * @param $array
+ * @param $dataKey
+ * @param $dataValue
+ * @return array
+ */
+function getKeyToName($array, $dataKey='id', $dataValue='name') {
+    $result = array();
+    if ($array != NULL && is_array($array)) {
+        foreach ($array as $value) {
+            $result[$value[$dataKey]] = $value[$dataValue];
+        }
+    }
+
+    return $result;
 }

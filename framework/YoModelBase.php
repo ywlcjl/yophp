@@ -162,7 +162,8 @@ class YoModelBase
         return $sth->execute($bindings);
     }
     
-    public function getPage($param=[], $orderBy = 'id DESC', $url='', $pagePer = 20, $suffix = '', $fields = '*', $pageStyle='pageDefault') {
+    public function getPage($param=[], $orderBy = 'id DESC', $url='', $pagePer = 20, $suffix = '', $fields = '*', $customPageStyle='pageDefault') {
+        $result = [];
         $urlArray = explode('/', $url);
         $pageUri = 1;
         foreach($urlArray as $key=>$value) {
@@ -178,16 +179,25 @@ class YoModelBase
 
         $total = $this->count($param);
         //获取数据
-        $result = $this->getList($param, $pagePer, $startRow, $orderBy, $fields);
+        $list = $this->getList($param, $pagePer, $startRow, $orderBy, $fields);
 
-        //自定义分页处理方法, 默认为pageDefault方法, 可以根据实际情况添加不同的样式方法
-        $this->$pageStyle($url, $pageNum, $pagePer, $total, $suffix);  //创建分页链接
-        
+        $result['list'] = $list;
+        $result['total'] = $total;
+        $result['current'] = $pageNum;
+        $result['size'] = $pagePer;
+        $result['url'] = $url;
+        $result['suffix'] = $suffix;
+
+        //创建自定义分页html, 默认为view类的pageDefault方法, 可以在view类添加自定义添加不同的样式方法, 留空则不创建html分页代码
+        if ($customPageStyle) {
+            view()->$customPageStyle($url, $pageNum, $pagePer, $total, $suffix);
+        }
+
         return $result;
     }
     
-    public function getPageSql($sql, $bindings = [], $url='', $pagePer=20, $suffix='', $pageStyle='pageDefault') {
-        $result = array();
+    public function getPageSql($sql, $bindings = [], $url='', $pagePer=20, $suffix='', $customPageStyle='pageDefault') {
+        $result = [];
 
         $urlArray = explode('/', $url);
         $pageUri = 1;
@@ -222,84 +232,22 @@ class YoModelBase
         //获取数据
         if ($total > 0) {
             $sql .= " LIMIT $startRow, $pagePer";
-            $result = $this->query($sql, $bindings);
+            $list = $this->query($sql, $bindings);
         }
-        
-        //自定义分页处理方法, 默认为pageDefault方法, 可以根据实际情况添加不同的样式方法
-        $this->$pageStyle($url, $pageNum, $pagePer, $total, $suffix);
+
+        $result['list'] = $list;
+        $result['total'] = $total;
+        $result['current'] = $pageNum;
+        $result['size'] = $pagePer;
+        $result['url'] = $url;
+        $result['suffix'] = $suffix;
+
+        //创建自定义分页html, 默认为view类的pageDefault方法, 可以在view类添加自定义添加不同的样式方法, 留空则不创建html分页代码
+        if ($customPageStyle) {
+            view()->$customPageStyle($url, $pageNum, $pagePer, $total, $suffix);
+        }
         
         return $result;
-    }
-
-    protected function pageDefault($baseUrl, $pageNum, $perPage = 20, $totalRows = 200, $suffix = '') {
-        $aClass = ' class="pageLink"';
-        $nowPage = $pageNum;
-        $totalPage = intval($totalRows / $perPage);
-        if($totalRows % $perPage > 0) {
-            $totalPage = $totalPage + 1;
-        }
-
-        $next = '';
-        $nextPage = $nowPage+1;
-        if($nowPage < $totalPage) {
-            $next = "<a href=\"$baseUrl/$nextPage{$suffix}\"$aClass>Next</a> ";
-        }
-        $prev = '';
-        $prevPage = $nowPage-1;
-        if($nowPage > 1) {
-            $prev = "<a href=\"$baseUrl/$prevPage{$suffix}\"$aClass>Prev</a> ";
-        }
-        
-        $showPage = 7;
-        $pageList = array();
-        
-        $startInt = 1;
-        $endInt = $totalPage;
-        
-	//页数列表
-        if ($totalPage - $showPage <= 0) {
-            
-        } else {
-            if ($nowPage - intval($showPage / 2) <= 0) {
-                $endInt = $showPage;
-            } elseif ($nowPage + intval($showPage / 2) > $totalPage) {
-                $startInt = $totalPage - $showPage + 1;
-                $endInt = $totalPage;
-            } else {
-                $startInt = $nowPage - intval($showPage / 2);
-                $endInt = $nowPage + intval($showPage / 2);
-            }
-        }
-        for($i=$startInt; $i<=$endInt; $i++) {
-            $pageList[] = $i;
-        }
-        
-        $pageStr = '<div class="pageList">';
-        
-        $pageStr .= "<a href=\"$baseUrl/1{$suffix}\"$aClass>First</a> ";
-        if($prev) {
-            $pageStr .= $prev;
-        }
-        
-        if($pageList) {
-            foreach ($pageList as $key=>$value) {
-                if($nowPage == $value) {
-                    $pageStr .= "<b>$value</b> ";
-                } else {
-                    $pageStr .= "<a href=\"$baseUrl/$value{$suffix}\"$aClass>$value</a> ";
-                }
-            }
-        }
-        
-        if($next) {
-            $pageStr .= $next;
-        }
-        
-        $pageStr .= "<a href=\"$baseUrl/$totalPage{$suffix}\"$aClass>Last</a> ";
-        
-        $pageStr .= '</div>';
-        
-        view()->setPageNav($pageStr);
     }
 
     public function insertId()

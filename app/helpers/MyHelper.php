@@ -1,36 +1,16 @@
 <?php
-if (!function_exists('yo_get_img_path')) {
+/**
+ * Custom Helper Fucntion, 你需要手动加载这个MyHelper文件公共函数
+ */
+
+if (!function_exists('myExampleFunction')) {
     /**
-     * 获取缩略图文件名
-     * @param type $path
-     * @param type $size
-     * @return type
+     * 自定义Helper函数例子, 仅供参考, 您可以完全自己编写任意自定义函数
+     * @param $result
+     * @return mixed|string
      */
-    function yo_get_img_path($path, $size = 'thumb')
+    function myExampleFunction($result='success')
     {
-        $newPath = '';
-
-        if ($size) {
-            $newPath = substr($path, 0, -(strlen($path) - strrpos($path, '.'))) . '_' . $size . substr($path, strrpos($path, '.'));
-        } else {
-            $newPath = $path;
-        }
-
-        return $newPath;
-    }
-}
-
-
-if (!function_exists('yo_get_filetype')) {
-    /**
-     * 返回文件类型名
-     * @param type $src
-     * @return type
-     */
-    function yo_get_filetype($src)
-    {
-        $result = substr($src, strrpos($src, '.') + 1, strlen($src));
-        //返回jpg, png
         return $result;
     }
 }

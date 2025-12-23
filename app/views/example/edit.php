@@ -23,7 +23,7 @@
             <div class="form-field-group">
                 <label for="status">Status:</label>
                 <select id="status" name="status" required>
-                    <option value="" disabled<?php if(!$id):?>selected<?php endif;?>>请选择</option>
+                    <option value="" disabled<?php if(isset($id) && !$id):?>selected<?php endif;?>>请选择</option>
                     <?php if ($statuss) : ?>
                         <?php foreach ($statuss as $k => $v): ?>
                             <option value="<?php echo $k ?>" <?php if (isset($detail['status']) &&  $detail['status'] === $k) echo 'selected' ?>><?php echo $v ?></option>

@@ -1,6 +1,9 @@
 <?php
 
-class BaseLib
+/**
+ * 您可以自定义类和方法, 以单例形式调用方法, spl_autoload_register("loadClass"); 会自己找到这个类并加载
+ */
+class MyLib
 {
     //单例实例化
     private static $_instance;
@@ -18,18 +21,16 @@ class BaseLib
         
         return self::$_instance;
     }
-    
-    /*
-     * 获取id对应的value
-     */
-    public function getKeyToName($array, $dkey='id', $dvalue='name') {
-        $result = array();
-        if ($array != NULL && is_array($array)) {
-            foreach ($array as $value) {
-                $result[$value[$dkey]] = $value[$dvalue];
-            }
-        }
 
+    /**
+     * 自定义的方法
+     * @param $result
+     * @return mixed|string
+     */
+    public function getMyExample($result='success')
+    {
         return $result;
     }
+    
+
 }

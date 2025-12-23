@@ -1,47 +1,67 @@
 <?php
 
-class YoController {
+class YoControllerBase {
 
-    // 视图对象
-    protected $view;
-    // 缓存对象
-    protected $cache;
+    protected function __construct() {
 
-    public function __construct() {
-        // 初始化视图引擎
-        $this->view = YoView::getInstance();
-
-        // 自动关联当前控制器名到模板路径（可选，模仿 CI 的便捷性）
-        // $this->view->setControllerName(get_class($this));
     }
+    private function __clone() {}
+    public function __wakeup() {}
 
-    /**
-     * 快速加载模型
-     * 模仿 CI3: $this->model('user')
-     */
-    protected function model($name) {
-        $className = ucfirst($name) . 'Model';
-        if (!isset($this->$className)) {
-            // 这里利用我们之前写的 Model 单例
-            $this->$className = $className::getInstance();
+    public function loadHelper($helperName) {
+        $file = HELPER_DIR . $helperName . '.php';
+
+        // 使用静态变量做简单的内部缓存，避免重复 include_once 的系统调用开销
+        static $loaded = [];
+        if (isset($loaded[$helperName])) {
+            return;
         }
-        return $this->$className;
+
+        if (file_exists($file)) {
+            include $file;
+            $loaded[$helperName] = true;
+        } else {
+            if (DEBUG_MODE !== 'production') {
+                die("YoPHP Error: Helper file '{$helperName}' not found in " . HELPER_DIR);
+            }
+        }
+    }
+
+
+    /**
+     * 过滤$_GET['key']
+     * @param $key
+     * @param $default
+     * @param $htmlspecialcharsOrAddslashes
+     * @return mixed|string|type
+     */
+    public function get($key, $default='', $htmlspecialcharsOrAddslashes=true) {
+        if (isset($_GET[$key])) {
+            if($_GET[$key] !== '') {
+                if ($htmlspecialcharsOrAddslashes) {
+                    return sanitize($_GET[$key]);
+                } else {
+                    return addslashes(trim($_GET[$key]));
+                }
+            }
+        }
+        return $default;
     }
 
     /**
-     * 快速跳转
-     * $this->goUrl('/login')
+     * 获取 POST 数据带安全过滤
      */
-    protected function goUrl($url) {
-        header("Location: " . $url);
-        exit;
+    public function post($key, $default='', $isHtmlspecialchars=true) {
+        if (isset($_POST[$key])) {
+            if($_POST[$key] !== '') {
+                if ($isHtmlspecialchars) {
+                    return sanitize($_POST[$key]);
+                } else {
+                    return trim($_POST[$key]);
+                }
+            }
+        }
+        return $default;
     }
 
-    /**
-     * 获取 POST 数据 (带安全过滤)
-     */
-    protected function post($key = null, $default = null) {
-        if ($key === null) return $_POST;
-        return isset($_POST[$key]) ? $_POST[$key] : $default;
-    }
 }

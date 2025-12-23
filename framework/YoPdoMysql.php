@@ -31,6 +31,7 @@ class YoPdoMysql {
                     PDO::ATTR_PERSISTENT => DB_PCONNECT,
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,    //打开异常模式
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,   //以数组形式返回
+                    PDO::ATTR_EMULATE_PREPARES   => false, //禁用伪模拟功能
                     //PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
                 );
 				$dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
