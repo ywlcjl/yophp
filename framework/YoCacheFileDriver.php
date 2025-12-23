@@ -72,11 +72,11 @@ class YoCacheFileDriver extends YoCacheDriver {
 
 
     /**
-     * Clean the Cache
+     * clear the Cache
      *
      * @return	bool	false on failure/true on success
      */
-    public function clean() {
+    public function clear() {
         return delete_files($this->_cachePath, FALSE, TRUE);
     }
 

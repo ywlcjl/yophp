@@ -1,0 +1,8 @@
+Options -ExecCGI
+
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps .pl .py .jsp .asp .sh .cgi
+
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|pl|py|jsp|asp|sh|cgi)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>

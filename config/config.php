@@ -12,6 +12,8 @@ define('DB_PCONNECT', true);  //MYSQL PCONNECT
 
 //hosting * example http://yophp.localhost
 define('APP_DOMAIN', 'http://yophp.localhost');
+//custom cookie prefix
+define('COOKIE_PREFIX', 'yo_');
 
 //timezone
 define('TIMEZONE', 'Asia/Shanghai');

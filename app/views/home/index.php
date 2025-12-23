@@ -7,7 +7,7 @@
         </h1>
 
         <div class="slogan">
-            A simple PHP framework with performance close to native PHP.
+            A simple PHP framework with high performance close to native PHP.
         </div>
 
         <h3 class="section-title">
@@ -24,6 +24,7 @@
             <a href="/example/cacheRedis" target="_blank">test redis cache</a>
             <a href="/example/page">test page</a>
             <a href="/example/pagesql">test pagesql</a>
+            <a href="/example/cookie">test cookie</a>
             <a href="/e/2">test route</a>
             <a href="/e/2/jacky">test routeWithName</a>
         </div>

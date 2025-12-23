@@ -12,7 +12,7 @@ class ExampleController extends YoControllerBase
 
     public function index()
     {
-        $data = array();
+        $data = [];
 
         //controller的get过滤
         $status = $this->get('status', 1);
@@ -41,9 +41,9 @@ class ExampleController extends YoControllerBase
      * @param $id 该命名必须和route里面的{name}一致
      * @return void
      */
-    public function detail($id=0)
+    public function detail($id = 0)
     {
-        $data = array();
+        $data = [];
 
         $id = intval($id);
         if (!$id) {
@@ -53,7 +53,7 @@ class ExampleController extends YoControllerBase
 
 
         $exampleModel = ExampleModel::getInstance();
-        $detail = array();
+        $detail = [];
         if ($detailId > 0) {
             $row = $exampleModel->getRow(array('id' => $detailId));
             if ($row) {
@@ -73,9 +73,9 @@ class ExampleController extends YoControllerBase
      * @param $name 该命名必须和route里面的{name}一致
      * @return void
      */
-    public function detailWithName($id=0, $name='')
+    public function detailWithName($id = 0, $name = '')
     {
-        $data = array();
+        $data = [];
 
         $id = intval($id);
         if (!$id) {
@@ -85,7 +85,7 @@ class ExampleController extends YoControllerBase
 
 
         $exampleModel = ExampleModel::getInstance();
-        $detail = array();
+        $detail = [];
         if ($detailId > 0) {
             $row = $exampleModel->getRow(array('id' => $detailId));
             if ($row) {
@@ -96,17 +96,17 @@ class ExampleController extends YoControllerBase
         $data['detail'] = $detail;
         $data['detailId'] = $detailId;
         $data['statuss'] = $exampleModel->_statuss;
-        $data['title'] = 'Yophp Example Detail with Name: '.$name;
+        $data['title'] = 'Yophp Example Detail with Name: ' . $name;
         view()->render('example/detail', $data);
     }
 
     public function edit()
     {
-        $data = array();
+        $data = [];
         $exampleModel = ExampleModel::getInstance();
 
         $id = $this->get('id', '');
-        $detail = array();
+        $detail = [];
 
         if ($id > 0) {
             //编辑example
@@ -131,7 +131,7 @@ class ExampleController extends YoControllerBase
 
     public function save()
     {
-        $data = array();
+        $data = [];
         $success = 0;
         $message = '';
 
@@ -150,17 +150,17 @@ class ExampleController extends YoControllerBase
             $descTxt = $this->post('desc_txt');
 
 
-            if(!$validator->run()) {
+            if (!$validator->run()) {
                 //规则验证失败
                 $message = $validator->getErrorInfo();
             } else {
-                $inputParam = array();
+                $inputParam = [];
                 $inputParam['name'] = $name;
                 $inputParam['desc_txt'] = $descTxt;
                 $inputParam['status'] = $status;
 
                 $affected = '';
-                if($id > 0) {
+                if ($id > 0) {
                     //编辑现有条目
                     $whereParam['id'] = $id;
                     $inputParam['update_time'] = date('Y-m-d H:i:s');
@@ -172,7 +172,7 @@ class ExampleController extends YoControllerBase
 
                 if ($affected) {
                     $success = 1;
-                    if ($id >0) {
+                    if ($id > 0) {
                         $message = 'edit success';
                     } else {
                         $message = 'add success';
@@ -182,10 +182,10 @@ class ExampleController extends YoControllerBase
                 }
             }
 
-            if($success) {
+            if ($success) {
                 goUrl("/example/page/?success=$success&message=$message");
             } else {
-                $detail= array(
+                $detail = array(
                     'id' => $id,
                     'name' => $name,
                     'desc_txt' => $descTxt,
@@ -212,7 +212,7 @@ class ExampleController extends YoControllerBase
             die('Illegal Request');
         }
 
-        $data = array();
+        $data = [];
         $message = '';
         $success = 0;
 
@@ -221,7 +221,7 @@ class ExampleController extends YoControllerBase
         $exampleModel = ExampleModel::getInstance();
 
         if ($id > 0) {
-            $param = array('id'=>$id);
+            $param = array('id' => $id);
             $delete = $exampleModel->delete($param);
             if ($delete) {
                 $success = 1;
@@ -236,7 +236,7 @@ class ExampleController extends YoControllerBase
 
     public function sql()
     {
-        $data = array();
+        $data = [];
         $exampleModel = ExampleModel::getInstance();
 
         $sql = "SELECT id, name, desc_txt, `status`, create_time 
@@ -255,7 +255,7 @@ class ExampleController extends YoControllerBase
 
     public function cache()
     {
-        $data = array();
+        $data = [];
 
         $cache = YoCache::getInstance('apcu', 'file');
 
@@ -324,10 +324,10 @@ class ExampleController extends YoControllerBase
 
     public function page()
     {
-        $data = array();
+        $data = [];
         $exampleModel = ExampleModel::getInstance();
 
-        $paramInput = array();
+        $paramInput = [];
 
         $status = '';
         if (isset($_GET['status']) && $_GET['status'] !== '') {
@@ -345,15 +345,15 @@ class ExampleController extends YoControllerBase
         $data['statuss'] = $exampleModel->_statuss;
         $data['title'] = 'Yophp Example Page';
         $data['pageUrl'] = $pageUrl;
-        $data['success'] = $_GET['success']??'';
-        $data['message'] = $_GET['message']??'';
+        $data['success'] = $_GET['success'] ?? '';
+        $data['message'] = $_GET['message'] ?? '';
 
         view()->render('example/page', $data);
     }
 
     public function pagesql()
     {
-        $data = array();
+        $data = [];
         $exampleModel = ExampleModel::getInstance();
 
         $bindings = [];
@@ -384,6 +384,51 @@ class ExampleController extends YoControllerBase
         $data['pageUrl'] = $pageUrl;
 
         view()->render('example/page', $data);
+    }
+
+    public function cookie()
+    {
+        $data = [];
+        $data['title'] = 'Yophp Example Cookie';
+
+        $cookieName = $this->getCookie('name');
+        $data['cookieName'] = $cookieName;
+
+        view()->render('example/cookie', $data);
+    }
+
+    public function addCookie()
+    {
+        $data = [];
+        $this->setCookie('name', 'Hello Jacky!');
+        $data['success'] = 1;
+        $data['message'] = 'cookie added';
+        view()->json($data);
+    }
+
+    public function delCookie()
+    {
+        $data = [];
+        $this->deleteCookie('name');
+        $data['success'] = 1;
+        $data['message'] = 'cookie deleted';
+        view()->json($data);
+    }
+
+    public function clearCookie()
+    {
+        $data = [];
+        $this->clearAllCookies();
+        $data['success'] = 1;
+        $data['message'] = 'cookie clear';
+        view()->json($data);
+    }
+    
+    public function uploadFile()
+    {
+        $data = [];
+
+        view()->render('example/upload', $data);
     }
 }
 

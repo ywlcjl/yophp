@@ -6,9 +6,12 @@ A simple PHP framework with performance close to native PHP.
 
 * Support mvc development model
 * Close to the execution efficiency of native PHP
-* Support MySQL active record model function
-* Support for controller module folders
-* Provide cache by apcu, redis convenience functions
+* Support MySQL active record model libraries
+* Support for controller input form validator
+* Provide cache with apcu, redis libraries
+* Provide file upload and picture resize, thumb libraries
+* Provide complete route config
+* Provide more example code to used
 
 ## Installation
 
@@ -18,6 +21,7 @@ A simple PHP framework with performance close to native PHP.
 * Create database yophp, the charset is utf8mb4
 * Import the yophp.sql to yophp database
 * The virtual host need support rewrited .htaccess file, because the url need to use.
+* If you want use file upload example, and not used windows, you need chmod 777 public/uploads/example
 * Visit local the http://yophp.localhost
 * Visit controller to action url like http://yophp.localhost/example/index
 * Visit moudle controller to action url like http://yophp.localhost/backend/home/index

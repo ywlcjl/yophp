@@ -84,12 +84,12 @@ class YoCacheRedisDriver extends YoCacheDriver {
     }
 
     /**
-     * Clean cache
+     * clear cache
      *
      * @return	bool
      * @see		Redis::flushDB()
      */
-    public function clean() {
+    public function clear() {
         return $this->_redis->flushDB();
     }
 

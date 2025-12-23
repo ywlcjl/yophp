@@ -52,11 +52,11 @@ class YoCacheApcuDriver extends YoCacheDriver {
     }
 
     /**
-     * Clean the cache
+     * clear the cache
      *
      * @return	bool	false on failure/true on success
      */
-    public function clean() {
+    public function clear() {
         return apcu_clear_cache('user');
     }
 

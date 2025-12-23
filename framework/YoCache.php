@@ -94,8 +94,8 @@ class YoCache {
         return $this->_cache->delete($this->_keyPrefix . $id);
     }
 
-    public function clean() {
-        return $this->_cache->clean();
+    public function clear() {
+        return $this->_cache->clear();
     }
 
     public function cacheInfo($type = 'user') {
