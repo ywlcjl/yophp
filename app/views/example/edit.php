@@ -1,15 +1,15 @@
 <?php view()->loadView('_header'); ?>
 
     <h1 class="main-title"><?php echo $title; ?></h1>
-<?php if (isset($message) && $message != ''): ?>
+    <?php if (isset($message) && $message != ''): ?>
     <div class="alert alert<?php if(isset($success) && $success):?>-success<?php else:?>-error<?php endif?>"><?php echo $message ?></div>
-<?php endif; ?>
+    <?php endif; ?>
     <div class="form-container">
         <form method="post" action="/example/save">
             <input type="hidden" name="id" value="<?php echo $detail['id']??'' ?>">
             <div class="form-field-group">
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" value="<?php echo $detail['name']??'' ?>" required placeholder="输入名称"></li>
+                <input type="text" id="name" name="name" value="<?php echo $detail['name']??'' ?>" required placeholder="输入名称">
             </div>
 
             <div class="form-field-group">

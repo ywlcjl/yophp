@@ -423,7 +423,7 @@ class ExampleController extends YoControllerBase
         $data['message'] = 'cookie clear';
         view()->json($data);
     }
-    
+
     public function upload()
     {
         $data = [];
@@ -435,10 +435,10 @@ class ExampleController extends YoControllerBase
 
         if (isset($_POST) && !empty($_POST)) {
             $config = [
-                'uploadPath'   => UPLOADS_DIR.'example',
+                'uploadPath' => UPLOADS_DIR . 'example',
                 'allowedTypes' => 'png|jpg|jpeg',
-                'maxSize'      => 10240,
-                'encryptName'  => true,
+                'maxSize' => 10240,
+                'encryptName' => true,
                 'fileNameSuffix' => 'yo_',
             ];
 
@@ -458,7 +458,7 @@ class ExampleController extends YoControllerBase
                     }
                 }
             } else {
-                $message = 'upload fail: '. $upload->getError();
+                $message = 'upload fail: ' . $upload->getError();
             }
         }
 
@@ -467,7 +467,52 @@ class ExampleController extends YoControllerBase
         $data['uploadData'] = $uploadData;
         $data['thumbPath'] = $thumbPath;
 
-            view()->render('example/upload', $data);
+        view()->render('example/upload', $data);
+    }
+
+    public function captcha()
+    {
+        session_start();
+        $data = [];
+        $success = 0;
+        $message = '';
+
+        if (isset($_POST) && !empty($_POST)) {
+            $validator = new YoValidator();
+            $validator->rule('captcha', 'captcha')->required()->alphaNumeric()->minLength(5)->maxLength(5);
+
+            $captcha = strtolower($this->post('captcha'));
+            if (!$validator->run()) {
+                //规则验证失败
+                $message = $validator->getErrorInfo();
+            } else if (!isset($_SESSION['captchaCode']) || $_SESSION['captchaCode'] == ''
+                ||  $captcha != $_SESSION['captchaCode']) {
+                $message = 'captcha fail';
+            } else {
+                $_SESSION['captchaCode'] = '';
+                $message = 'captcha success';
+                $success = 1;
+            }
+        }
+
+        $data['title'] = 'Yophp Example Captcha';
+        $data['success'] = $success;
+        $data['message'] = $message;
+
+        view()->render('example/captcha', $data);
+    }
+
+    public function getCaptchaImage()
+    {
+        session_start();
+
+        $captcha = new YoCaptcha(160, 50, 5);
+
+        // 直接输出图片流到浏览器
+        $captcha->doImage();
+
+        // 将验证码存入 Session 供后续验证
+        $_SESSION['captchaCode'] = $captcha->getCode();
     }
 }
 

@@ -96,9 +96,9 @@ class YoImage {
     }
 
     private function output($img, $path, $type, $quality = 100) {
-        if (!$path && !headers_sent()) {
-            header('Content-Type: ' . image_type_to_mime_type($type));
-        }
+//        if (!$path && !headers_sent()) {
+//            header('Content-Type: ' . image_type_to_mime_type($type));
+//        }
 
         switch ($type) {
             case IMAGETYPE_GIF:  return imagegif($img, $path);
