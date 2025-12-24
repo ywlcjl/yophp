@@ -30,4 +30,5 @@ A simple PHP framework with high performance close to native PHP.
 
 ## More Content
 * This framework is for testing purposes only. If you want to use it in a production environment, please read the source code to ensure the security of your product.
-<img width="1180" height="626" alt="content_1" src="https://github.com/user-attachments/assets/dd68d123-4580-48ec-9edd-719b77122f16" />
+<img width="1175" height="695" alt="content_1" src="https://github.com/user-attachments/assets/5bf2615f-7c16-478f-99c9-a5c99fe71fa8" />
+
