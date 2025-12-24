@@ -14,25 +14,19 @@ function loadClass($className)
     $modelKey = substr($className, -5, 5);
 
     //YoModel.php 截取Yo
-    $frameworklKey = substr($className, 0, 2);
+    $frameworkKey = substr($className, 0, 2);
 
-    if ($modelKey == 'Model') {
+    $file = '';
+    if ($modelKey === 'Model') {
         $file = APP_DIR . 'models/' . $className . '.php';
-        if (file_exists($file)) {
-            include_once $file;
-        }
-    } elseif ($frameworklKey == 'Yo') {
-        //加载框架类
+    } elseif ($frameworkKey === 'Yo') {
         $file = FRAMEWORK_DIR . $className . '.php';
-        if (file_exists($file)) {
-            include_once $file;
-        }
     } else {
-        //加载自定义类
         $file = APP_DIR . 'libraries/' . $className . '.php';
-        if (file_exists($file)) {
-            include_once $file;
-        }
+    }
+
+    if ($file && file_exists($file)) {
+        include $file;
     }
 }
 

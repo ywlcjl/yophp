@@ -1,6 +1,4 @@
-<?php view()->render('backend/_header', array(
-        'title' => $title,
-)); ?>
+<?php view()->loadView('backend/_header'); ?>
 
     <h1><?php echo $title ?></h1>
 
@@ -15,4 +13,4 @@
             </a>
         </p>
     </div>
-<?php view()->render('backend/_footer'); ?>
+<?php view()->loadView('backend/_footer'); ?>

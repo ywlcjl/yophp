@@ -1,11 +1,8 @@
-<?php view()->render('_header', array(
-        'title' => $title
-));
-?>
+<?php view()->loadView('_header'); ?>
 
     <h1 class="main-title"><?php echo $title; ?></h1>
 <?php if (isset($message) && $message != ''): ?>
-    <div class="alert alert-error"><?php echo $message ?></div>
+    <div class="alert alert<?php if(isset($success) && $success):?>-success<?php else:?>-error<?php endif?>"><?php echo $message ?></div>
 <?php endif; ?>
     <div class="form-container">
         <form method="post" action="/example/save">
@@ -44,4 +41,4 @@
         </div>
     </div>
 
-<?php view()->render('_footer'); ?>
+<?php view()->loadView('_footer'); ?>

@@ -2,11 +2,13 @@
 
 class YoView
 {
-    //protected $variables = array();
-    
+
     private static $_instance;
     
     private $_pageNav;
+
+    protected $_vars = [];
+    protected $_isRendered = false;
 
     protected function __construct() {}
     private function __clone() {}
@@ -20,20 +22,54 @@ class YoView
         }
         return self::$_instance;
     }
-    
+
+
+    /*
+     * 模板赋值
+     */
+    public function assign($key, $value) {
+        $this->_vars[$key] = $value;
+    }
+
     /*
      * 渲染视图
      */
     public function render($view, $data=array()) {
-        if($data) {
-            extract($data);
+        if ($this->_isRendered) {
+            // 如果非要第二次 render，就报错提示改用 loadView
+            die("YoPHP Warning: render() can only be called once. Please use view()->loadView().");
+        }
+        $this->_isRendered = true;
+
+        //render的$data优先级高于$_vars, 会覆盖$_vars有的同键名的值
+        if ($data) {
+            $this->_vars = array_merge($this->_vars, $data);
+        }
+
+        if($this->_vars) {
+            extract($this->_vars);
         }
 
         $viewFile = VIEW_DIR.$view.'.php';
-        
-        if(file_exists($viewFile)) {
-            include $viewFile;
+
+        include $viewFile;
+    }
+
+    public function loadView($view, $data=array()) {
+        //render的$data优先级高于$_vars, 会覆盖$_vars有的同键名的值
+        if ($data) {
+            $finalData = array_merge($this->_vars, $data);
+        } else {
+            $finalData = $this->_vars;
         }
+
+        if($finalData) {
+            extract($finalData);
+        }
+
+        $viewFile = VIEW_DIR.$view.'.php';
+
+        include $viewFile;
     }
 
     /**

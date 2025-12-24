@@ -1,6 +1,4 @@
-<?php view()->render('_header', array(
-        'title' => $title
-)); ?>
+<?php view()->loadView('_header'); ?>
 
     <h1 class="main-title"><?php echo $title; ?></h1>
     <div class="slogan">SQL Query: <?php echo $sql ?></div>
@@ -40,4 +38,4 @@
         <a href="/" class="back-link">← Back</a>
     </div>
 
-<?php view()->render('_footer'); ?>
+<?php view()->loadView('_footer'); ?>

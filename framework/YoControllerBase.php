@@ -11,7 +11,7 @@ class YoControllerBase {
     protected function loadHelper($helperName) {
         $file = HELPER_DIR . $helperName . '.php';
 
-        // 使用静态变量做简单的内部缓存，避免重复 include_once 的系统调用开销
+        // 使用静态变量做简单的内部缓存，避免重复 include 的系统调用开销
         static $loaded = [];
         if (isset($loaded[$helperName])) {
             return;

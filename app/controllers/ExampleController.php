@@ -424,11 +424,50 @@ class ExampleController extends YoControllerBase
         view()->json($data);
     }
     
-    public function uploadFile()
+    public function upload()
     {
         $data = [];
+        $data['title'] = 'Yophp Example Upload File';
+        $success = 0;
+        $message = '';
+        $uploadData = [];
+        $thumbPath = '';
 
-        view()->render('example/upload', $data);
+        if (isset($_POST) && !empty($_POST)) {
+            $config = [
+                'uploadPath'   => UPLOADS_DIR.'example',
+                'allowedTypes' => 'png|jpg|jpeg',
+                'maxSize'      => 10240,
+                'encryptName'  => true,
+                'fileNameSuffix' => 'yo_',
+            ];
+
+            $upload = new YoUpload($config);
+
+            if ($upload->doUpload('file')) {
+                $uploadData = $upload->getData();
+                $success = 1;
+                $message = 'upload success';
+
+                //生成缩略图
+                if (file_exists($uploadData['fullPath'])) {
+                    $image = new YoImage($uploadData['fullPath']);
+                    $result = $image->thumb(360, 240, 'thumb', 100, true);
+                    if ($result) {
+                        $thumbPath = getImgPath($uploadData['relativePath'], 'thumb');
+                    }
+                }
+            } else {
+                $message = 'upload fail: '. $upload->getError();
+            }
+        }
+
+        $data['success'] = $success;
+        $data['message'] = $message;
+        $data['uploadData'] = $uploadData;
+        $data['thumbPath'] = $thumbPath;
+
+            view()->render('example/upload', $data);
     }
 }
 

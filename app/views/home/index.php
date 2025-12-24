@@ -1,6 +1,4 @@
-<?php view()->render('_header', array(
-        'title' => $title.' Index',
-)); ?>
+<?php view()->loadView('_header'); ?>
 
         <h1 class="main-title">
             <?php echo $title?>
@@ -25,6 +23,7 @@
             <a href="/example/page">test page</a>
             <a href="/example/pagesql">test pagesql</a>
             <a href="/example/cookie">test cookie</a>
+            <a href="/example/upload">test upload</a>
             <a href="/e/2">test route</a>
             <a href="/e/2/jacky">test routeWithName</a>
         </div>
@@ -37,4 +36,4 @@
             </p>
         </div>
 
-<?php view()->render('_footer'); ?>
+<?php view()->loadView('_footer'); ?>

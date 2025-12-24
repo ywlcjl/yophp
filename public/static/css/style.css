@@ -84,14 +84,14 @@ body {
 }
 
 /* Cyan */
-.link-group a:nth-child(6), .link-group a:nth-child(7), .link-group a:nth-child(8){
+.link-group a:nth-child(6), .link-group a:nth-child(7), .link-group a:nth-child(8),.link-group a:nth-child(9){
     background-color: #ffc107;
     color: #333; /* 浅色背景使用深色文字 */
 }
 
 /* Yellow/Orange */
- .link-group a:nth-child(9), .link-group a:nth-child(10),
- .link-group a:nth-child(11),.link-group a:nth-child(12) {
+  .link-group a:nth-child(10), .link-group a:nth-child(11),
+.link-group a:nth-child(12),.link-group a:nth-child(13) {
     background-color: #6c757d;
 }
 

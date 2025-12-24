@@ -12,15 +12,18 @@ class YoUpload
     private $maxSize;       // 最大限制 (KB)
     private $encryptName;   // 是否加密文件名
 
+    private $fileNameSuffix; //文件名称前序
+
     private $error = '';
     private $fileData = [];
 
     public function __construct($config = [])
     {
-        $this->basePath = isset($config['upload_path']) ? rtrim($config['upload_path'], '/') . '/' : './uploads/';
-        $this->allowedTypes = isset($config['allowed_types']) ? explode('|', strtolower($config['allowed_types'])) : ['jpg', 'png', 'gif', 'jpeg'];
-        $this->maxSize = isset($config['max_size']) ? (int)$config['max_size'] : 2048;
-        $this->encryptName = isset($config['encrypt_name']) ? (bool)$config['encrypt_name'] : true;
+        $this->basePath = isset($config['uploadPath']) ? $config['uploadPath'].'/' : '';
+        $this->allowedTypes = isset($config['allowedTypes']) ? explode('|', strtolower($config['allowedTypes'])) : ['png','jpg','jpeg','gif'];
+        $this->maxSize = isset($config['maxSize']) ? (int)$config['maxSize'] : 2048;
+        $this->encryptName = isset($config['encryptName']) ? (bool)$config['encryptName'] : true;
+        $this->fileNameSuffix = isset($config['fileNameSuffix']) ? $config['fileNameSuffix'] : '';
     }
 
     /**
@@ -28,6 +31,11 @@ class YoUpload
      */
     public function doUpload($field = 'file')
     {
+        if (!$this->basePath) {
+            $this->error = '上传文件夹不能为空.';
+            return false;
+        }
+
         if (!isset($_FILES[$field]) || $_FILES[$field]['error'] === UPLOAD_ERR_NO_FILE) {
             $this->error = '请选择上传文件';
             return false;
@@ -35,13 +43,13 @@ class YoUpload
 
         $file = $_FILES[$field];
 
-        // 1. 基础 PHP 错误检查
+        // 基础 PHP 错误检查
         if ($file['error'] !== UPLOAD_ERR_OK) {
             $this->error = '上传错误代码: ' . $file['error'];
             return false;
         }
 
-        // 2. 动态计算日期子目录并创建
+        // 动态计算日期子目录并创建
         $this->subPath = date('Y/m/d') . '/';
         $fullPath = $this->basePath . $this->subPath;
 
@@ -53,14 +61,14 @@ class YoUpload
             }
         }
 
-        // 3. 后缀名初步过滤
+        // 后缀名初步过滤
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         if (!in_array($ext, $this->allowedTypes)) {
             $this->error = '不允许的文件后缀';
             return false;
         }
 
-        // 4. MIME 类型真伪校验 (深度防伪)
+        // MIME 类型真伪校验 (深度防伪)
         if (class_exists('finfo')) {
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $realMime = $finfo->file($file['tmp_name']);
@@ -70,28 +78,32 @@ class YoUpload
             }
         }
 
-        // 5. 验证大小
+        // 验证大小
         if ($file['size'] > ($this->maxSize * 1024)) {
             $this->error = '文件大小超出限制';
             return false;
         }
 
-        // 6. 生成安全文件名
-        $newName = $this->encryptName
-            ? md5(uniqid(mt_rand(), true)) . '.' . $ext
-            : $this->sanitizeFilename($file['name']);
+        // 生成安全唯一32位文件名
+        if ($this->encryptName) {
+            $newName = $this->fileNameSuffix.md5(uniqid(mt_rand(), true)) . '.' . $ext;
+        } else {
+            $newName = $this->sanitizeFilename($file['name']);
+        }
 
-        // 7. 移动文件
+        // 移动文件
         $targetFile = $fullPath . $newName;
         if (move_uploaded_file($file['tmp_name'], $targetFile)) {
             $this->fileData = [
-                'file_name' => $newName,
-                'sub_path' => $this->subPath,           // 2025/12/23/
-                'full_path' => $targetFile,              // ./uploads/2025/12/23/xxx.jpg
-                'relative_path' => $this->subPath . $newName, // 存入数据库推荐此字段
-                'file_ext' => '.' . $ext,
-                'file_size' => round($file['size'] / 1024, 2),
-                'file_mime' => isset($realMime) ? $realMime : $file['type']
+                'fileName' => $newName,
+                'originalName' => $file['name'],
+                'subPath' => $this->subPath,           // 2025/12/23/
+                'sourceDir' => $this->basePath . $this->subPath, // ./uploads/example/2025/12/23/
+                'fullPath' => $targetFile,              // ./uploads/example/2025/12/23/xxx.jpg
+                'relativePath' => substr($this->basePath, 2).$this->subPath . $newName, //存入数据库推荐此字段uploads/example/2025/12/23/xxx.jpg
+                'fileExt' =>  $ext,
+                'fileSize' => round($file['size'] / 1024, 2),
+                'fileMime' => isset($realMime) ? $realMime : $file['type']
             ];
             return true;
         }
@@ -112,7 +124,7 @@ class YoUpload
             'gif' => ['image/gif'],
             'pdf' => ['application/pdf'],
             'zip' => ['application/zip', 'application/x-zip-compressed'],
-            'txt' => ['text/plain'],
+            'txt' => ['text/plain']
         ];
         return isset($mimes[$ext]) && in_array($realMime, $mimes[$ext]);
     }
@@ -130,7 +142,7 @@ class YoUpload
         return $this->error;
     }
 
-    public function data()
+    public function getData()
     {
         return $this->fileData;
     }
