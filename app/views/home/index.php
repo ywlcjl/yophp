@@ -24,6 +24,7 @@
             <a href="/example/pagesql">test pagesql</a>
             <a href="/example/cookie">test cookie</a>
             <a href="/example/upload">test upload</a>
+            <a href="/example/captcha">test captcha</a>
             <a href="/e/2">test route</a>
             <a href="/e/2/jacky">test routeWithName</a>
         </div>
