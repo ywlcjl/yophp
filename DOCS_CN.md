@@ -22,20 +22,21 @@ project/
 ├── config/             # 配置文件 (routes.php, config.php)
 ├── framework/          # 框架核心源码
 ├── public/             # 外部入口 (index.php, uploads)
+```
 
 🛠️ 快速上手
 1. 路由配置 (config/routes.php)
 你可以定义非常灵活的路由规则：
-\```php
+```php
 $routes = [
     'news/{id:num}' => 'example/detail',           // 匹配 /news/123
     'user/{name:str}/{id:num}' => 'user/profile', // 自动提取参数 $name 和 $id
 ];
-\```
+```
 
 2. 控制器 (Controller)
 通过继承 YoControllerBase，你可以获得强大的辅助功能：
-\```php
+```php
 class ExampleController extends YoControllerBase {
     // 路由中的 {id} 会自动赋值给 $id
     public function detail($id = 0) {
@@ -44,21 +45,21 @@ class ExampleController extends YoControllerBase {
         view()->render('example/detail', $data);
     }
 }
-\```
+```
 
 3. 模型 (Model)
-\```php
+```php
 class ExampleModel extends YoModelBase {
     protected static $_name = 'example'; // 对应数据库表名
 }
-\```
+```
 
 4. 缓存使用
-\```php
+```php
 // 优先使用 Redis，失败则回退到文件缓存
 $cache = YoCache::getInstance('redis', 'file');
 $cache->save('key', $data, 3600);
-\```
+```
 
 🛡️ 安全建议
 确保 public/ 目录为 Web 服务器的 Document Root。
