@@ -313,7 +313,7 @@ $result = $userModel->getPage($params, 'id DESC', '/user/list');
     * Chinese Support: Call pageDefaultCn() (Displays: 首页, 上一页, 下一页, 尾页).
 
     * Full Customization: Call createPageNav() to define custom HTML class names, making it easy to integrate with CSS frameworks like Bootstrap or Tailwind.
-# (4). Core Logic Analysis
+## (4). Core Logic Analysis
 * **Variable Extraction (extract)**
     * YoView internally uses PHP's extract() function. This means if you define
     * $data['my_name'] = 'Jacky'; 

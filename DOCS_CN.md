@@ -308,7 +308,7 @@ $result = $userModel->getPage($params, 'id DESC', '/user/list');
   * **中文支持**：调用 pageDefaultCn()（显示：首页、上一页、下一页、尾页）。
 
   * **完全自定义**：你可以调用 createPageNav() 自定义 HTML 的 class 类名，方便对接不同的 CSS 框架（如 Bootstrap 或 Tailwind）。
-# (4). 视图层核心逻辑解析
+## (4). 视图层核心逻辑解析
 * **变量提取 (extract)**
   * YoView 内部使用了 PHP 的 extract() 函数。这意味着你在控制器中定义的：
   * $data['my_name'] = 'Jacky';
