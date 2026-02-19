@@ -1,11 +1,12 @@
 # Yophp
 
-A simple PHP framework with high performance close to native PHP.
+A Lightweight simple PHP framework with high-performance close to native PHP.
 
 ## Features
 
 * Support mvc development methods
 * Close to the execution efficiency of native PHP
+* QPS performance is over 10x than mainstream heavy-duty PHP frameworks.
 * Support MySQL active record model libraries
 * Support Controller input form validator
 * Provide Cache with apcu, redis libraries
