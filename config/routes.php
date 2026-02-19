@@ -13,7 +13,7 @@
  * 'admin' => 'backend/home/index'
  */
 
-$routes = array(
+$routes = [
     'e' => 'example',
     'e/{id:num}' => 'example/detail',
     'e/{id:num}/profile' => 'example/json',
@@ -22,4 +22,4 @@ $routes = array(
     'e/page' => 'example/page',
     'json' => 'example/json',
     'admin' => 'backend/home/index'
-);
+];
